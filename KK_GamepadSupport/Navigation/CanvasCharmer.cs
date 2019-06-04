@@ -100,7 +100,7 @@ namespace KK_GamepadSupport.Navigation
                 {
                     if (!CanvasManager.IsSelectionValid(selected))
                     {
-                        Logger.Log(LogLevel.Message, "invalid selection");
+                        if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "invalid selection");
                         selected = null;
                     }
                 }
@@ -122,14 +122,13 @@ namespace KK_GamepadSupport.Navigation
             {
                 if (!CanvasManager.IsSelectionValid(selected))
                 {
-                    Logger.Log(LogLevel.Message, "invalid selection");
+                    if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "invalid selection");
                     selected = null;
                 }
             }
 
             if (selected == null)
             {
-                Logger.Log(LogLevel.Info, "null currentSelectedGameObject");
                 CanvasManager.SelectControl();
             }
             else
@@ -138,14 +137,14 @@ namespace KK_GamepadSupport.Navigation
 
                 if (selectable == null)
                 {
-                    Logger.Log(LogLevel.Info, "not a Selectable");
+                    if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "not a Selectable");
                     CanvasManager.SelectControl();
                 }
                 else
                 {
                     if (!selectable.isActiveAndEnabled)
                     {
-                        Logger.Log(LogLevel.Info, "object not isActiveAndEnabled");
+                        if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "object not isActiveAndEnabled");
                         // Needed for some transitions, e.g. live mode
                         CanvasManager.UpdateCanvases();
                         CanvasManager.SelectControl();
@@ -195,7 +194,7 @@ namespace KK_GamepadSupport.Navigation
         {
             if (Manager.Scene.Instance.IsNowLoadingFade)
                 return true;
-            
+
             if (Communication.IsInstance())
             {
                 if (!Communication.Instance.isInit)

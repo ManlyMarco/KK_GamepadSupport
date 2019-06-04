@@ -53,10 +53,7 @@ namespace KK_GamepadSupport.Gamepad
 
                 var scrollAmount = Mathf.RoundToInt(GamepadSupport.CurrentState.ThumbSticks.Left.Y * Native.WHEEL_DELTA * Time.deltaTime);
                 if (scrollAmount != 0)
-                {
-                    BepInEx.Logger.Log(LogLevel.Info, "scroll");
                     Native.mouse_event(Native.MOUSEEVENTF_WHEEL, 0, 0, scrollAmount, 0);
-                }
             }
         }
 
