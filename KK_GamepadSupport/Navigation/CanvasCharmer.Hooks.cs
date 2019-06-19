@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -7,6 +8,7 @@ using Harmony;
 using SceneAssist;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace KK_GamepadSupport.Navigation
 {
@@ -81,13 +83,26 @@ namespace KK_GamepadSupport.Navigation
                 var handlerPost = AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPost));
                 foreach (var methodInfo in new[]
                 {
-                    AccessTools.Method(typeof(ActionGame.ClassRoomFileListCtrl), "SetToggleHandler", new[]{typeof(GameObject)}) ,
-                    AccessTools.Method(typeof(StaffRoom.StaffRoomCharaListCtrl), "SetToggleHandler", new[]{typeof(GameObject)}),
-                    AccessTools.Method(typeof(StaffRoom.StaffRoomMapListCtrl), "SetToggleHandler", new[]{typeof(GameObject)})
+                    // Some are KK or KKP specific, hence why not using typeof
+                    AccessTools.Method(Type.GetType("ActionGame.ClassRoomFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}) ,
+                    AccessTools.Method(Type.GetType("StaffRoom.StaffRoomCharaListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    AccessTools.Method(Type.GetType("StaffRoom.StaffRoomMapListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+
+                    AccessTools.Method(Type.GetType("ChaCustom.CustomSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    AccessTools.Method(Type.GetType("ExternalFile.ExternalFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    AccessTools.Method(Type.GetType("EmblemSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+
+                    AccessTools.Method(Type.GetType("UGUI_AssistLibrary.UIAL_ListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
                 })
                 {
-                    hi.Patch(methodInfo, null, new HarmonyMethod(handlerPost));
+                    if (methodInfo != null)
+                        hi.Patch(methodInfo, null, new HarmonyMethod(handlerPost));
                 }
+
+                // KKP specific, has a MonoB argument instead of GameObj like others
+                var kkpList = AccessTools.Method(Type.GetType("FileListUI.ThreadFileListCtrl`2[[ChaCustom.CustomFileInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[ChaCustom.CustomFileInfoComponent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler");
+                if (kkpList != null)
+                    hi.Patch(kkpList, null, new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
 
                 // Fix keyboard navigation not working in HSprite / h scene
                 var hspriteTargets = AccessTools.GetDeclaredMethods(typeof(HSprite));
@@ -109,7 +124,7 @@ namespace KK_GamepadSupport.Navigation
 
                 _disabled = true;
             }
-            
+
             /// <summary>
             /// Fix opening dropdowns not updating navigation
             /// </summary>
@@ -182,6 +197,11 @@ namespace KK_GamepadSupport.Navigation
             public static void SetToggleHandlerPost(GameObject obj)
             {
                 obj.GetOrAddComponent<CharaListKeyboardFix>();
+            }
+
+            public static void SetToggleHandlerPostForParty(MonoBehaviour fic)
+            {
+                fic.GetOrAddComponent<CharaListKeyboardFix>();
             }
 
             /// <summary>

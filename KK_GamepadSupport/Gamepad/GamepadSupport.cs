@@ -6,6 +6,7 @@ using XInputDotNetPure;
 namespace KK_GamepadSupport.Gamepad
 {
     [BepInProcess("Koikatu")]
+    [BepInProcess("Koikatsu Party")]
     [BepInPlugin(Guid, Guid, Metadata.Version)]
     // Run before any other MonoBehaviours
     [DefaultExecutionOrder(-100)]

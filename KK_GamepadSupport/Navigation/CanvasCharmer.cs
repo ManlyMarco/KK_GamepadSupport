@@ -14,6 +14,7 @@ using Scene = UnityEngine.SceneManagement.Scene;
 namespace KK_GamepadSupport.Navigation
 {
     [BepInProcess("Koikatu")]
+    [BepInProcess("Koikatsu Party")]
     [BepInPlugin(Guid, Guid, Metadata.Version)]
     public partial class CanvasCharmer : BaseUnityPlugin
     {

@@ -1,5 +1,7 @@
-﻿using Harmony;
+﻿using System.Linq;
+using Harmony;
 using Illusion.Component.UI;
+using UGUI_AssistLibrary;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -13,20 +15,42 @@ namespace KK_GamepadSupport.Navigation
         public void OnSelect(BaseEventData eventData)
         {
             var trigger = GetComponent<ObservablePointerEnterTrigger>();
-            var subject = Traverse.Create(trigger).Field("onPointerEnter").GetValue<Subject<PointerEventData>>();
-            subject.OnNext(null);
+            if (trigger != null)
+            {
+                var subject = Traverse.Create(trigger).Field("onPointerEnter").GetValue<Subject<PointerEventData>>();
+                subject.OnNext(null);
+            }
+            else
+            {
+                GetComponent<UIAL_EventTrigger>().triggers.First(x=>x.eventID == EventTriggerType.PointerEnter).callback.Invoke(null);
+            }
         }
 
         public void OnDeselect(BaseEventData eventData)
         {
             var trigger = GetComponent<ObservablePointerExitTrigger>();
-            var subject = Traverse.Create(trigger).Field("onPointerExit").GetValue<Subject<PointerEventData>>();
-            subject.OnNext(null);
+            if (trigger != null)
+            {
+                var subject = Traverse.Create(trigger).Field("onPointerExit").GetValue<Subject<PointerEventData>>();
+                subject.OnNext(null);
+            }
+            else
+            {
+                GetComponent<UIAL_EventTrigger>().triggers.First(x => x.eventID == EventTriggerType.PointerExit).callback.Invoke(null);
+            }
         }
 
         public void OnSubmit(BaseEventData eventData)
         {
-            GetComponent<PointerClickCheck>().onPointerClick.Invoke(null);
+            var pc = GetComponent<PointerClickCheck>();
+            if (pc != null)
+            {
+                pc.onPointerClick.Invoke(null);
+            }
+            else
+            {
+                GetComponent<UIAL_EventTrigger>().triggers.First(x => x.eventID == EventTriggerType.PointerClick).callback.Invoke(null);
+            }
         }
     }
 }
