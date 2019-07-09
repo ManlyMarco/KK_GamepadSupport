@@ -113,11 +113,7 @@ namespace KK_GamepadSupport.Navigation
                 _timeSinceLastAction = CursorTimeout;
 
             if (_timeSinceLastAction >= CursorTimeout)
-            {
-                if (selected != null)
-                    CurrentEventSystem.SetSelectedGameObject(null);
                 return;
-            }
 
             if (CanvasManager.UpdateAllNavigation())
             {
