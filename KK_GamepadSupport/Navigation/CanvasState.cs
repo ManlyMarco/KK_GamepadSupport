@@ -38,8 +38,7 @@ namespace KK_GamepadSupport.Navigation
 
             _groups = FilterComponents(canvas.GetComponentsInChildren<CanvasGroup>()).ToDictionary(x => x, x => false);
 
-            if (Raycaster != null && HasSelectables())
-                HookScrollRects();
+            HookScrollRects();
         }
 
         public bool IsFullScreen => _isFullScreen && Canvas.isActiveAndEnabled;

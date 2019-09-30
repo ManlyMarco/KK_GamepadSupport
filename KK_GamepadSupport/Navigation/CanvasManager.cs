@@ -116,6 +116,10 @@ namespace KK_GamepadSupport.Navigation
                         cs.Raycaster.StartCoroutine(ChangeCanvasRenderModeCo(cs.Canvas));
                     _canvases.Add(cs);
                 }
+                else
+                {
+                    cs.Dispose();
+                }
             }
         }
 
