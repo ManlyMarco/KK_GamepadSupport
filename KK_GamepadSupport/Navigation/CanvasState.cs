@@ -52,7 +52,7 @@ namespace KK_GamepadSupport.Navigation
         // Handle nested canvases
         private IEnumerable<T> FilterComponents<T>(IEnumerable<T> allComps) where T : Component
         {
-            return allComps.Where(s => s.GetComponentInParent<Canvas>() == Canvas && !IsBlacklisted(s));
+            return allComps.Where(s => s.GetComponentInParent<Canvas>() == Canvas);
         }
 
         private static readonly UnityEngine.UI.Navigation _navOn = new UnityEngine.UI.Navigation { mode = UnityEngine.UI.Navigation.Mode.Automatic };
@@ -97,11 +97,6 @@ namespace KK_GamepadSupport.Navigation
             }
 
             return anyChanged;
-        }
-
-        private static bool IsBlacklisted(Component selectable)
-        {
-            return selectable.name == "InputField";
         }
 
         public bool NavigationIsEnabled => _lastEnabledVal == true && Enabled;
