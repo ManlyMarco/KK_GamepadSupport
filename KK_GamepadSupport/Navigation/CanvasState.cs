@@ -78,17 +78,18 @@ namespace KK_GamepadSupport.Navigation
 
             foreach (var x in _groups.ToList())
             {
-                var groupVisible = x.Key.alpha > 0.01f;
-                if (groupVisible != x.Value)
+                var group = x.Key;
+                var groupEnabled = group.interactable && group.alpha > 0.01f;
+                if (groupEnabled != x.Value)
                 {
-                    _groups[x.Key] = groupVisible;
+                    _groups[group] = groupEnabled;
 
-                    foreach (var selectable in FilterComponents(x.Key.GetComponentsInChildren<Selectable>(true)))
+                    foreach (var selectable in FilterComponents(group.GetComponentsInChildren<Selectable>(true)))
                     {
                         if (!isEnabled)
                             selectable.navigation = _navOff;
                         else
-                            selectable.navigation = groupVisible ? _navOn : _navOff;
+                            selectable.navigation = groupEnabled ? _navOn : _navOff;
                     }
 
                     anyChanged = true;
@@ -98,7 +99,7 @@ namespace KK_GamepadSupport.Navigation
             return anyChanged;
         }
 
-        private static bool IsBlacklisted(Selectable selectable)
+        private static bool IsBlacklisted(Component selectable)
         {
             return selectable.name == "InputField";
         }
