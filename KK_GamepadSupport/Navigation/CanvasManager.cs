@@ -157,12 +157,12 @@ namespace KK_GamepadSupport.Navigation
         {
             if (_destroyed) return;
 
-            // Ignore dropdown lists, not necessary to calculate them and there's some issue with calculating visible items
-            // todo normal dropdowns too?
-            if (sr.GetComponentInParent<TMP_Dropdown>()) return;
-
             var srt = sr.GetComponent<RectTransform>();
             if (srt == null || sr.content == null) return;
+
+            // Ignore dropdown lists, not necessary to calculate them and there's some issue with calculating visible items
+            // todo normal dropdowns too?
+            var isDropdown = sr.GetComponentInParent<TMP_Dropdown>() != null;
 
             // Scrollview coordinates are 0,0 in the center of viewport
             var maxOffset = srt.rect.height / 2;
@@ -172,17 +172,10 @@ namespace KK_GamepadSupport.Navigation
                 var selectable = listItem.GetComponentInChildren<Selectable>();
                 if (selectable == null) continue;
 
-                var posY = srt.InverseTransformPoint(listItem.position).y;
-
-                var height = listItem.sizeDelta.y;
-
-                var itemVisibleThreshold = height / 2;
-
-                var isMostlyVisible = posY - itemVisibleThreshold < maxOffset && -posY + itemVisibleThreshold < maxOffset;
+                var isVisible = isDropdown || IsListItemMostlyVisible(srt, maxOffset, listItem);
 
                 //listItem.GetComponentInChildren<Selectable>().interactable = isMostlyVisible;
-
-                if (isMostlyVisible)
+                if (isVisible)
                 {
                     if (!canEnable) continue;
 
@@ -197,6 +190,18 @@ namespace KK_GamepadSupport.Navigation
                     selectable.navigation = nav;
                 }
             }
+        }
+
+        private static bool IsListItemMostlyVisible(RectTransform srt, float maxOffset, RectTransform listItem)
+        {
+            var posY = srt.InverseTransformPoint(listItem.position).y;
+
+            var height = listItem.sizeDelta.y;
+
+            var itemVisibleThreshold = height / 2;
+
+            var isMostlyVisible = posY - itemVisibleThreshold < maxOffset && -posY + itemVisibleThreshold < maxOffset;
+            return isMostlyVisible;
         }
     }
 }
