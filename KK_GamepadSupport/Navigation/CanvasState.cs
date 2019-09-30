@@ -10,6 +10,7 @@ namespace KK_GamepadSupport.Navigation
     {
         public readonly Canvas Canvas;
         public readonly GraphicRaycaster Raycaster;
+        private readonly Dictionary<CanvasGroup, bool> _groups;
 
         private bool? _lastEnabledVal;
         private readonly bool _isFullScreen;
@@ -33,6 +34,8 @@ namespace KK_GamepadSupport.Navigation
             {
                 _isFullScreen = true;
             }
+
+            _groups = canvas.GetComponentsInChildren<CanvasGroup>().Where(s => s.GetComponentInParent<Canvas>() == Canvas).ToDictionary(x => x, x => false);
         }
 
         public bool IsFullScreen => _isFullScreen && Canvas.isActiveAndEnabled;
@@ -48,21 +51,47 @@ namespace KK_GamepadSupport.Navigation
             return allComps.Where(s => s.GetComponentInParent<Canvas>() == Canvas);
         }
 
+        private static readonly UnityEngine.UI.Navigation _navOn = new UnityEngine.UI.Navigation { mode = UnityEngine.UI.Navigation.Mode.Automatic };
+        private static readonly UnityEngine.UI.Navigation _navOff = new UnityEngine.UI.Navigation { mode = UnityEngine.UI.Navigation.Mode.None };
+
         public bool UpdateNavigation(bool forceDisable)
         {
+            var anyChanged = false;
+
             var isEnabled = !forceDisable && Enabled;
             if (isEnabled != _lastEnabledVal)
             {
-                var nav = new UnityEngine.UI.Navigation { mode = isEnabled ? UnityEngine.UI.Navigation.Mode.Automatic : UnityEngine.UI.Navigation.Mode.None };
                 foreach (var selectable in GetSelectables(true))
-                    selectable.navigation = nav;
+                    selectable.navigation = isEnabled ? _navOn : _navOff;
+
+                foreach (var x in _groups.ToList())
+                    _groups[x.Key] = isEnabled;
 
                 _lastEnabledVal = isEnabled;
 
-                return true;
+                anyChanged = true;
             }
 
-            return false;
+            foreach (var x in _groups.ToList())
+            {
+                var groupVisible = x.Key.alpha > 0.01f;
+                if (groupVisible != x.Value)
+                {
+                    _groups[x.Key] = groupVisible;
+
+                    foreach (var selectable in x.Key.GetComponentsInChildren<Selectable>(true).Where(s => s.GetComponentInParent<Canvas>() == Canvas))
+                    {
+                        if (!isEnabled)
+                            selectable.navigation = _navOff;
+                        else
+                            selectable.navigation = groupVisible ? _navOn : _navOff;
+                    }
+
+                    anyChanged = true;
+                }
+            }
+
+            return anyChanged;
         }
 
         public bool NavigationIsEnabled => _lastEnabledVal == true && Enabled;
