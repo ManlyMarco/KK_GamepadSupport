@@ -14,6 +14,7 @@ List of controls for different game modes. General controls apply to most of oth
 Most of the graphical interface (buttons, toggles, etc.) can be navigated and controlled as follows:
 - Left stick X/Y and Dpad - Select control (currently selected control is makred with a pointer icon). If a slider or scrollbar is selected then either X or Y axis will control its value. 
 - A - Click or otherwise activate currently selected control (also accept text field input in case it eats your inputs)
+- B - Cancel (same as mouse right-click)
 
 Global hotkeys:
 - Start - Show tutorial if available.
@@ -50,10 +51,8 @@ There are no special controls in menu mode.
 - Left trigger / Right trigger - Change how Right stick controls the camera.
 
 ### Mouse emulation mode
-Some parts of the game (e.g. touching in H) and mods (mod interfaces) might be impossible to use without mouse. To solve this issue a mouse cursor emulation mode is included. To enter the mouse mode press both Left Trigger and Right Trigger at the same time and hold them. You can then use the following:
+Some parts of the game (e.g. touching in H) and mods (mod interfaces) might be impossible to use without mouse. To solve this issue a mouse cursor emulation mode is included. To enter/exit the mouse mode press both Left Trigger and Right Trigger at the same time. You can then use the following:
 - Left stick Y - Scroll mouse wheel Up/Down.
 - Right stick X/Y - Move cursor horizontally/vertically.
-- Left stick Click - Left mouse click and hold.
-- Right stick Click - Right mouse click and hold.
-
-
+- Left Trigger - Right mouse click and hold.
+- Right Trigger - Left mouse click and hold.
