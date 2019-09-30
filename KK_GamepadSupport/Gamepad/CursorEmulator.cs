@@ -36,7 +36,11 @@ namespace KK_GamepadSupport.Gamepad
         public static void OnUpdate()
         {
             if (!Application.isFocused)
+            {
                 _enabled = false;
+                LeftUp();
+                RightUp();
+            }
 
             // Deadzone for trigger presses
             var rPressed = _previousR ? GamepadSupport.CurrentState.Triggers.Right > 0.1f : GamepadSupport.CurrentState.Triggers.Right > 0.4f;
