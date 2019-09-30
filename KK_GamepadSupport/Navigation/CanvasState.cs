@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,7 @@ namespace KK_GamepadSupport.Navigation
 
             var crt = canvas.GetComponent<RectTransform>();
 
-            if (canvas.GetComponentsInChildren<Image>(false).Any(x =>
+            if (FilterComponents(canvas.GetComponentsInChildren<Image>(false)).Any(x =>
             {
                 var rt = x.GetComponent<RectTransform>();
                 return rt.rect.width >= crt.rect.width - 1 && rt.rect.height >= crt.rect.height - 1;
@@ -36,6 +37,9 @@ namespace KK_GamepadSupport.Navigation
             }
 
             _groups = FilterComponents(canvas.GetComponentsInChildren<CanvasGroup>()).ToDictionary(x => x, x => false);
+
+            if (Raycaster != null && HasSelectables())
+                HookScrollRects();
         }
 
         public bool IsFullScreen => _isFullScreen && Canvas.isActiveAndEnabled;
@@ -96,11 +100,91 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
+            if (anyChanged)
+            {
+                if (NavigationIsEnabled)
+                {
+                    foreach (var scrollRect in FilterComponents(Canvas.GetComponentsInChildren<ScrollRect>(true)))
+                        SetNavigableInScrollRect(scrollRect, false);
+                }
+            }
+
             return anyChanged;
         }
 
         public bool NavigationIsEnabled => _lastEnabledVal == true && Enabled;
 
         public bool HasSelectables() => Canvas.GetComponentInChildren<Selectable>() != null;
+
+        #region ScrollRects
+
+        private bool _destroyed;
+
+        public void Dispose()
+        {
+            _destroyed = true;
+        }
+
+        private void HookScrollRects()
+        {
+            foreach (var sr in FilterComponents(Canvas.GetComponentsInChildren<ScrollRect>(true)))
+            {
+                var scrollRect = sr;
+                scrollRect.onValueChanged.AddListener(val => SetNavigableInScrollRect(scrollRect, true));
+            }
+        }
+
+        private void SetNavigableInScrollRect(ScrollRect sr, bool canEnable)
+        {
+            if (_destroyed) return;
+
+            var srt = sr.GetComponent<RectTransform>();
+            if (srt == null || sr.content == null) return;
+
+            // Ignore dropdown lists, not necessary to calculate them and there's some issue with calculating visible items
+            // todo normal dropdowns too?
+            var isDropdown = sr.GetComponentInParent<TMP_Dropdown>() != null;
+
+            // Scrollview coordinates are 0,0 in the center of viewport
+            var maxOffset = srt.rect.height / 2;
+
+            foreach (var listItem in sr.content.OfType<RectTransform>())
+            {
+                var selectable = listItem.GetComponentInChildren<Selectable>();
+                if (selectable == null) continue;
+
+                var isVisible = isDropdown || IsListItemMostlyVisible(srt, maxOffset, listItem);
+
+                //listItem.GetComponentInChildren<Selectable>().interactable = isMostlyVisible;
+                if (isVisible)
+                {
+                    if (!canEnable) continue;
+
+                    var nav = selectable.navigation;
+                    nav.mode = UnityEngine.UI.Navigation.Mode.Automatic;
+                    selectable.navigation = nav;
+                }
+                else
+                {
+                    var nav = selectable.navigation;
+                    nav.mode = UnityEngine.UI.Navigation.Mode.None;
+                    selectable.navigation = nav;
+                }
+            }
+        }
+
+        private static bool IsListItemMostlyVisible(RectTransform srt, float maxOffset, RectTransform listItem)
+        {
+            var posY = srt.InverseTransformPoint(listItem.position).y;
+
+            var height = listItem.sizeDelta.y;
+
+            var itemVisibleThreshold = height / 2;
+
+            var isMostlyVisible = posY - itemVisibleThreshold < maxOffset && -posY + itemVisibleThreshold < maxOffset;
+            return isMostlyVisible;
+        }
+
+        #endregion
     }
 }

@@ -86,7 +86,6 @@
     <Compile Include="Metadata.cs" />
     <Compile Include="Navigation\CursorDrawer.cs" />
     <Compile Include="Navigation\PointerActionKeyboardFix.cs" />
-    <Compile Include="Navigation\ScrollToSelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

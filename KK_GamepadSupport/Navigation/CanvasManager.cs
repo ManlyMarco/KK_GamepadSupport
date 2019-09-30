@@ -4,7 +4,6 @@ using System.Linq;
 using BepInEx.Logging;
 using Manager;
 using StrayTech;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -26,7 +25,12 @@ namespace KK_GamepadSupport.Navigation
 
         public IEnumerable<CanvasState> GetCanvases(bool topOnly)
         {
-            _canvases.RemoveAll(x => x.Canvas == null);
+            _canvases.RemoveAll(x =>
+            {
+                var shouldRemove = x.Canvas == null;
+                if(shouldRemove) x.Dispose();
+                return shouldRemove;
+            });
             var ordered = _canvases.OrderByDescending(x => x.Canvas.isActiveAndEnabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
             return topOnly ? ordered.Take(1) : ordered;
         }
@@ -92,15 +96,7 @@ namespace KK_GamepadSupport.Navigation
                 // If sort order equals the topmost fullscreen canvas, enable navigation if render order is higher or equal to topmost fullscreen canvas
                 var forceDisable = state.SortOrder == minSort ? state.RenderOrder < minRender : state.SortOrder < minSort;
                 if (state.UpdateNavigation(forceDisable))
-                {
-                    if (state.NavigationIsEnabled)
-                    {
-                        foreach (var scrollRect in state.Canvas.GetComponentsInChildren<ScrollRect>(true))
-                            SetNavigableInScrollRect(scrollRect, false);
-                    }
-
                     anyChanged = true;
-                }
             }
             return anyChanged;
         }
@@ -109,9 +105,9 @@ namespace KK_GamepadSupport.Navigation
         {
             if (_destroyed) return;
 
-            _canvases.Clear();
+            ClearCanvasStates();
 
-            foreach (var canvase in Object.FindObjectsOfType<Canvas>().Concat(Game.Instance?.actScene?.AdvScene?.GetComponentsInChildren<Canvas>(true) ?? new Canvas[0]).Distinct())
+            foreach (var canvase in Object.FindObjectsOfType<Canvas>().Concat(Game.Instance?.actScene?.AdvScene?.GetComponentsInChildren<Canvas>(true) ?? Enumerable.Empty<Canvas>()).Distinct())
             {
                 var cs = new CanvasState(canvase);
                 if (cs.Raycaster != null && cs.HasSelectables())
@@ -121,8 +117,6 @@ namespace KK_GamepadSupport.Navigation
                     _canvases.Add(cs);
                 }
             }
-
-            HookScrollRects();
         }
 
         private static IEnumerator ChangeCanvasRenderModeCo(Canvas target)
@@ -134,74 +128,21 @@ namespace KK_GamepadSupport.Navigation
             target.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 
-        private void HookScrollRects()
+        private void ClearCanvasStates()
         {
-            foreach (var sr in _canvases.SelectMany(c => c.Canvas.GetComponentsInChildren<ScrollRect>(true)))
-            {
-                var scrollRect = sr;
-                scrollRect.onValueChanged.AddListener(val => SetNavigableInScrollRect(scrollRect, true));
-            }
+            foreach (var canvasState in _canvases)
+                canvasState.Dispose();
 
-            //foreach (var scrollRect in _canvases.SelectMany(c => c.Canvas.GetComponentsInChildren<ScrollRect>()))
-            //    scrollRect.GetOrAddComponent<ScrollToSelection>();
-        }
-
-        public void OnDestroy()
-        {
-            _destroyed = true;
+            _canvases.Clear();
         }
 
         private bool _destroyed;
 
-        private void SetNavigableInScrollRect(ScrollRect sr, bool canEnable)
+        public void OnDestroy()
         {
-            if (_destroyed) return;
+            _destroyed = true;
 
-            var srt = sr.GetComponent<RectTransform>();
-            if (srt == null || sr.content == null) return;
-
-            // Ignore dropdown lists, not necessary to calculate them and there's some issue with calculating visible items
-            // todo normal dropdowns too?
-            var isDropdown = sr.GetComponentInParent<TMP_Dropdown>() != null;
-
-            // Scrollview coordinates are 0,0 in the center of viewport
-            var maxOffset = srt.rect.height / 2;
-
-            foreach (var listItem in sr.content.OfType<RectTransform>())
-            {
-                var selectable = listItem.GetComponentInChildren<Selectable>();
-                if (selectable == null) continue;
-
-                var isVisible = isDropdown || IsListItemMostlyVisible(srt, maxOffset, listItem);
-
-                //listItem.GetComponentInChildren<Selectable>().interactable = isMostlyVisible;
-                if (isVisible)
-                {
-                    if (!canEnable) continue;
-
-                    var nav = selectable.navigation;
-                    nav.mode = UnityEngine.UI.Navigation.Mode.Automatic;
-                    selectable.navigation = nav;
-                }
-                else
-                {
-                    var nav = selectable.navigation;
-                    nav.mode = UnityEngine.UI.Navigation.Mode.None;
-                    selectable.navigation = nav;
-                }
-            }
-        }
-
-        private static bool IsListItemMostlyVisible(RectTransform srt, float maxOffset, RectTransform listItem)
-        {
-            var posY = srt.InverseTransformPoint(listItem.position).y;
-
-            var height = listItem.sizeDelta.y;
-
-            var itemVisibleThreshold = height / 2;
-
-            var isMostlyVisible = posY - itemVisibleThreshold < maxOffset && -posY + itemVisibleThreshold < maxOffset;
-            return isMostlyVisible;
+            ClearCanvasStates();
         }
     }
 }
