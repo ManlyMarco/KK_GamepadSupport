@@ -35,26 +35,55 @@ namespace KK_GamepadSupport.Gamepad
 
         public static void OnUpdate()
         {
+            if (!Application.isFocused)
+                _enabled = false;
+
+            // Deadzone for trigger presses
+            var rPressed = _previousR ? GamepadSupport.CurrentState.Triggers.Right > 0.1f : GamepadSupport.CurrentState.Triggers.Right > 0.4f;
+            var lPressed = _previousL ? GamepadSupport.CurrentState.Triggers.Left > 0.1f : GamepadSupport.CurrentState.Triggers.Left > 0.4f;
+
+            var bothPressed = rPressed && lPressed;
+            if (bothPressed != _previousBoth)
+            {
+                _previousBoth = bothPressed;
+                if (bothPressed)
+                {
+                    _enabled = !_enabled;
+
+                    BepInEx.Logger.Log(LogLevel.Message, "Cursor mode " + (_enabled ? "ON (LTrig and RTrig for mouse buttons)" : "OFF"));
+
+                    // Fix stuck keys
+                    if (!_enabled)
+                    {
+                        LeftUp();
+                        RightUp();
+                    }
+                }
+            }
+
             if (EmulatingCursor())
             {
                 var amount = GamepadSupport.GetRightStick() * Time.deltaTime * 700;
                 if (amount.magnitude > 0)
                     MoveCursor(amount);
 
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.LeftStick))
+                if (rPressed && !_previousR)
                     LeftDown();
-                else if (GamepadSupport.GetButtonUp(state => state.Buttons.LeftStick))
+                else if (!rPressed && _previousR)
                     LeftUp();
 
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.RightStick))
+                if (lPressed && !_previousL)
                     RightDown();
-                else if (GamepadSupport.GetButtonUp(state => state.Buttons.RightStick))
+                else if (!lPressed && _previousL)
                     RightUp();
 
                 var scrollAmount = Mathf.RoundToInt(GamepadSupport.CurrentState.ThumbSticks.Left.Y * Native.WHEEL_DELTA * Time.deltaTime);
                 if (scrollAmount != 0)
                     Native.mouse_event(Native.MOUSEEVENTF_WHEEL, 0, 0, scrollAmount, 0);
             }
+
+            _previousR = rPressed;
+            _previousL = lPressed;
         }
 
         private static class Native
@@ -72,9 +101,14 @@ namespace KK_GamepadSupport.Gamepad
             public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
         }
 
+        private static bool _enabled;
         public static bool EmulatingCursor()
         {
-            return GamepadSupport.CurrentState.Triggers.Right > 0.01f && GamepadSupport.CurrentState.Triggers.Left > 0.01f;
+            return _enabled;
         }
+
+        private static bool _previousBoth;
+        private static bool _previousL;
+        private static bool _previousR;
     }
 }

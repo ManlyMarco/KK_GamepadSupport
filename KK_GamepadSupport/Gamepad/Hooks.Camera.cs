@@ -90,6 +90,8 @@ namespace KK_GamepadSupport.Gamepad
 
             private static bool OnProcessCameraControls(BaseCameraControl_Ver2 cameraControl)
             {
+                if (CursorEmulator.EmulatingCursor()) return false;
+
                 const float xRotSpeed = 1.3f;
                 const float yRotSpeed = 0.8f;
                 const float moveSpeed = 0.03f;
@@ -134,7 +136,6 @@ namespace KK_GamepadSupport.Gamepad
                 }
                 else
                 {
-                    // Emulating cursor
                     return false;
                 }
 
