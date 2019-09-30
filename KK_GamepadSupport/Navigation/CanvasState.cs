@@ -35,7 +35,7 @@ namespace KK_GamepadSupport.Navigation
                 _isFullScreen = true;
             }
 
-            _groups = canvas.GetComponentsInChildren<CanvasGroup>().Where(s => s.GetComponentInParent<Canvas>() == Canvas).ToDictionary(x => x, x => false);
+            _groups = FilterComponents(canvas.GetComponentsInChildren<CanvasGroup>()).ToDictionary(x => x, x => false);
         }
 
         public bool IsFullScreen => _isFullScreen && Canvas.isActiveAndEnabled;
@@ -46,9 +46,13 @@ namespace KK_GamepadSupport.Navigation
 
         public IEnumerable<Selectable> GetSelectables(bool includeInactive)
         {
-            var allComps = Canvas.GetComponentsInChildren<Selectable>(includeInactive);
-            // Handle nested canvases
-            return allComps.Where(s => s.GetComponentInParent<Canvas>() == Canvas);
+            return FilterComponents(Canvas.GetComponentsInChildren<Selectable>(includeInactive));
+        }
+
+        // Handle nested canvases
+        private IEnumerable<T> FilterComponents<T>(IEnumerable<T> allComps) where T : Component
+        {
+            return allComps.Where(s => s.GetComponentInParent<Canvas>() == Canvas && !IsBlacklisted(s));
         }
 
         private static readonly UnityEngine.UI.Navigation _navOn = new UnityEngine.UI.Navigation { mode = UnityEngine.UI.Navigation.Mode.Automatic };
@@ -79,7 +83,7 @@ namespace KK_GamepadSupport.Navigation
                 {
                     _groups[x.Key] = groupVisible;
 
-                    foreach (var selectable in x.Key.GetComponentsInChildren<Selectable>(true).Where(s => s.GetComponentInParent<Canvas>() == Canvas))
+                    foreach (var selectable in FilterComponents(x.Key.GetComponentsInChildren<Selectable>(true)))
                     {
                         if (!isEnabled)
                             selectable.navigation = _navOff;
@@ -92,6 +96,11 @@ namespace KK_GamepadSupport.Navigation
             }
 
             return anyChanged;
+        }
+
+        private static bool IsBlacklisted(Selectable selectable)
+        {
+            return selectable.name == "InputField";
         }
 
         public bool NavigationIsEnabled => _lastEnabledVal == true && Enabled;
