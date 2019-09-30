@@ -42,6 +42,14 @@ namespace KK_GamepadSupport.Gamepad
             else
             {
                 CursorEmulator.OnUpdate();
+
+                // Simulate right click for cancelling out of menus
+                // Ideal would be hooking Input.GetMouseKeyDown but it requires a detour
+                if(GetButtonDown(state => state.Buttons.B))
+                {
+                    CursorEmulator.RightDown();
+                    CursorEmulator.RightUp();
+                }
             }
         }
 
