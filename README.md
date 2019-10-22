@@ -3,7 +3,7 @@ Mod that adds support for using XInput-compatible gamepads (aka Xbox 360 control
 
 ## Installation
 1. Make sure your game is updated and has [BepInEx v4.1](https://github.com/BepInEx/BepInEx), installed.
-2. Download the latest release from [releases](/../../releases).
+2. Download the latest release from [releases](https://github.com/ManlyMarco/KK_GamepadSupport/releases).
 3. Extract contents of the archive directly into your game's directory.
 4. Start Koikatu.exe. Once in main menu try pressing arrow keys on your keyboard and Dpad on your controller.
 
