@@ -37,9 +37,12 @@ namespace KK_GamepadSupport.Gamepad
         {
             if (!Application.isFocused)
             {
+                if (_enabled)
+                {
+                    LeftUp();
+                    RightUp();
+                }
                 _enabled = false;
-                LeftUp();
-                RightUp();
             }
 
             // Deadzone for trigger presses
