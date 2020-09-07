@@ -12,16 +12,28 @@ namespace KK_GamepadSupport.Navigation
 {
     public class CanvasManager
     {
+        // Prefer to select controls from these canvases when looking for controls to select
+        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> { "CvsMainMenu", "ActionMenuCanvas" };
+
         private readonly List<CanvasState> _canvases = new List<CanvasState>();
 
         private static EventSystem CurrentEventSystem => EventSystem.current;
-
+        
+        /// <summary>
+        /// Get all components selectable by keyboard/gamepad input, in the order of input capure importance
+        /// </summary>
+        /// <param name="includeInactive">Include inactive Selectables in the search</param>
+        /// <param name="topOnly">Only return results from the topmost canvas instead of all valid canvases</param>
         public IEnumerable<Selectable> GetAllSelectables(bool includeInactive, bool topOnly)
         {
-            var canvases = GetSelectableCanvases(topOnly);
+            var canvases = GetSelectableCanvases(topOnly).OrderByDescending(x => _preferredCanvasNames.Contains(x.Canvas.name));
             return canvases.SelectMany(c => c.GetSelectables(includeInactive));
         }
 
+        /// <summary>
+        /// Get all valid canvases in the order of input capure importance
+        /// </summary>
+        /// <param name="topOnly">Only return the topmost canvas instead of all valid canvases</param>
         public IEnumerable<CanvasState> GetCanvases(bool topOnly)
         {
             _canvases.RemoveAll(x =>
@@ -33,7 +45,11 @@ namespace KK_GamepadSupport.Navigation
             var ordered = _canvases.OrderByDescending(x => x.Canvas.isActiveAndEnabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
             return topOnly ? ordered.Take(1) : ordered;
         }
-
+        
+        /// <summary>
+        /// Get all valid canvases that can be selected by keyboard/gamepad input, in the order of input capure importance
+        /// </summary>
+        /// <param name="topOnly">Only return the topmost canvas instead of all valid canvases</param>
         public IEnumerable<CanvasState> GetSelectableCanvases(bool topOnly = false)
         {
             var anyFullscreen = false;
