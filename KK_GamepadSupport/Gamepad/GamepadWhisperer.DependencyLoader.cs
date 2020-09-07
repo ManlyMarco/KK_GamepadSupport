@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace KK_GamepadSupport.Gamepad
 {
-    public partial class GamepadSupport
+    public partial class GamepadWhisperer
     {
         private static class DependencyLoader
         {
@@ -15,7 +15,7 @@ namespace KK_GamepadSupport.Gamepad
 
             public static void LoadDependencies()
             {
-                var assemblyPath = Path.GetDirectoryName(typeof(GamepadSupport).Assembly.Location);
+                var assemblyPath = Path.GetDirectoryName(typeof(GamepadWhisperer).Assembly.Location);
 
                 // Don't use .dll to avoid bepinex trying to load it and throwing an error
                 var nativeLibFileName = "XInputInterface.lib";

@@ -22,13 +22,13 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return true;
 
-                if (GamepadSupport.CurrentState.IsConnected)
+                if (GamepadWhisperer.CurrentState.IsConnected)
                 {
                     foreach (var proc in __instance.procList)
                     {
                         if (proc.enabled)
                         {
-                            if (_hotkeyBindings.TryGetValue(proc.keyCode, out var func) && GamepadSupport.GetButtonDown(func))
+                            if (_hotkeyBindings.TryGetValue(proc.keyCode, out var func) && GamepadWhisperer.GetButtonDown(func))
                             {
                                 proc.call.Invoke();
                                 return false;

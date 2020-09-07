@@ -8,7 +8,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         public static void InitHooks()
         {
-            var hi = new Harmony(GamepadSupport.Guid);
+            var hi = new Harmony(GamepadSupportPlugin.Guid + ".Gamepad");
             Camera.InitHooks(hi);
             Canvas.InitHooks(hi);
             MainGameMap.InitHooks(hi);
@@ -23,6 +23,6 @@ namespace KK_GamepadSupport.Gamepad
             _disabled = true;
         }
 
-        private static ManualLogSource Logger => GamepadSupport.Logger;
+        private static ManualLogSource Logger => GamepadSupportPlugin.Logger;
     }
 }

@@ -46,8 +46,8 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             // Deadzone for trigger presses
-            var rPressed = _previousR ? GamepadSupport.CurrentState.Triggers.Right > 0.1f : GamepadSupport.CurrentState.Triggers.Right > 0.4f;
-            var lPressed = _previousL ? GamepadSupport.CurrentState.Triggers.Left > 0.1f : GamepadSupport.CurrentState.Triggers.Left > 0.4f;
+            var rPressed = _previousR ? GamepadWhisperer.CurrentState.Triggers.Right > 0.1f : GamepadWhisperer.CurrentState.Triggers.Right > 0.4f;
+            var lPressed = _previousL ? GamepadWhisperer.CurrentState.Triggers.Left > 0.1f : GamepadWhisperer.CurrentState.Triggers.Left > 0.4f;
 
             var bothPressed = rPressed && lPressed;
             if (bothPressed != _previousBoth)
@@ -57,7 +57,7 @@ namespace KK_GamepadSupport.Gamepad
                 {
                     _enabled = !_enabled;
 
-                    GamepadSupport.Logger.Log(LogLevel.Message, "Cursor mode " + (_enabled ? "ON (LTrig and RTrig for mouse buttons)" : "OFF"));
+                    GamepadSupportPlugin.Logger.Log(LogLevel.Message, "Cursor mode " + (_enabled ? "ON (LTrig and RTrig for mouse buttons)" : "OFF"));
 
                     // Fix stuck keys
                     if (!_enabled)
@@ -70,7 +70,7 @@ namespace KK_GamepadSupport.Gamepad
 
             if (EmulatingCursor())
             {
-                var amount = GamepadSupport.GetRightStick() * Time.deltaTime * 700;
+                var amount = GamepadWhisperer.GetRightStick() * Time.deltaTime * 700;
                 if (amount.magnitude > 0)
                     MoveCursor(amount);
 
@@ -84,7 +84,7 @@ namespace KK_GamepadSupport.Gamepad
                 else if (!lPressed && _previousL)
                     RightUp();
 
-                var scrollAmount = Mathf.RoundToInt(GamepadSupport.CurrentState.ThumbSticks.Left.Y * Native.WHEEL_DELTA * Time.deltaTime);
+                var scrollAmount = Mathf.RoundToInt(GamepadWhisperer.CurrentState.ThumbSticks.Left.Y * Native.WHEEL_DELTA * Time.deltaTime);
                 if (scrollAmount != 0)
                     Native.mouse_event(Native.MOUSEEVENTF_WHEEL, 0, 0, scrollAmount, 0);
             }

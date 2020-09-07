@@ -48,20 +48,20 @@ namespace KK_GamepadSupport.Gamepad
                     switch (axisName)
                     {
                         case "Mouse X":
-                            var x = GamepadSupport.CurrentState.ThumbSticks.Right.X;
+                            var x = GamepadWhisperer.CurrentState.ThumbSticks.Right.X;
                             if (Mathf.Abs(x) > 0.01f)
                                 return x;
                             break;
 
                         case "Mouse Y":
-                            var y = GamepadSupport.CurrentState.ThumbSticks.Right.Y;
+                            var y = GamepadWhisperer.CurrentState.ThumbSticks.Right.Y;
                             if (Mathf.Abs(y) > 0.01f)
                                 return y;
                             break;
 
                         case "Mouse ScrollWheel":
-                            var ltVal = GamepadSupport.CurrentState.Triggers.Left;
-                            var rtVal = GamepadSupport.CurrentState.Triggers.Right;
+                            var ltVal = GamepadWhisperer.CurrentState.Triggers.Left;
+                            var rtVal = GamepadWhisperer.CurrentState.Triggers.Right;
                             if (ltVal > 0.01f || rtVal > 0.01f)
                                 return (-ltVal + rtVal) * 0.01f;
                             break;
@@ -98,15 +98,15 @@ namespace KK_GamepadSupport.Gamepad
                 // todo expose?
                 const float speedMultiplier = 1f;
 
-                var stick = GamepadSupport.CurrentState.ThumbSticks.Right;
+                var stick = GamepadWhisperer.CurrentState.ThumbSticks.Right;
                 var axis = stick.X;
                 var axis2 = stick.Y;
 
                 if (Mathf.Abs(axis2) < 0.01f && Mathf.Abs(axis) < 0.01f)
                     return false;
 
-                var ltVal = GamepadSupport.CurrentState.Triggers.Left;
-                var rtVal = GamepadSupport.CurrentState.Triggers.Right;
+                var ltVal = GamepadWhisperer.CurrentState.Triggers.Left;
+                var rtVal = GamepadWhisperer.CurrentState.Triggers.Right;
                 var ltPressed = ltVal > 0.3;
                 var rtPressed = rtVal > 0.3;
 

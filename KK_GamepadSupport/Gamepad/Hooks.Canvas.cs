@@ -24,12 +24,12 @@ namespace KK_GamepadSupport.Gamepad
 
                 if (axisName == "Horizontal")
                 {
-                    if (GamepadSupport.CurrentState.DPad.Right == ButtonState.Pressed)
+                    if (GamepadWhisperer.CurrentState.DPad.Right == ButtonState.Pressed)
                     {
                         __result = 1;
                         return false;
                     }
-                    if (GamepadSupport.CurrentState.DPad.Left == ButtonState.Pressed)
+                    if (GamepadWhisperer.CurrentState.DPad.Left == ButtonState.Pressed)
                     {
                         __result = -1;
                         return false;
@@ -37,12 +37,12 @@ namespace KK_GamepadSupport.Gamepad
                 }
                 else if (axisName == "Vertical")
                 {
-                    if (GamepadSupport.CurrentState.DPad.Up == ButtonState.Pressed)
+                    if (GamepadWhisperer.CurrentState.DPad.Up == ButtonState.Pressed)
                     {
                         __result = 1;
                         return false;
                     }
-                    if (GamepadSupport.CurrentState.DPad.Down == ButtonState.Pressed)
+                    if (GamepadWhisperer.CurrentState.DPad.Down == ButtonState.Pressed)
                     {
                         __result = -1;
                         return false;
@@ -62,7 +62,7 @@ namespace KK_GamepadSupport.Gamepad
 
                 if (buttonName == "Horizontal")
                 {
-                    if (GamepadSupport.GetButtonDown(state => state.DPad.Right) || GamepadSupport.GetButtonDown(state => state.DPad.Left))
+                    if (GamepadWhisperer.GetButtonDown(state => state.DPad.Right) || GamepadWhisperer.GetButtonDown(state => state.DPad.Left))
                     {
                         __result = true;
                         return false;
@@ -70,7 +70,7 @@ namespace KK_GamepadSupport.Gamepad
                 }
                 else if (buttonName == "Vertical")
                 {
-                    if (GamepadSupport.GetButtonDown(state => state.DPad.Up) || GamepadSupport.GetButtonDown(state => state.DPad.Down))
+                    if (GamepadWhisperer.GetButtonDown(state => state.DPad.Up) || GamepadWhisperer.GetButtonDown(state => state.DPad.Down))
                     {
                         __result = true;
                         return false;

@@ -78,9 +78,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GamepadSupportPlugin.cs" />
     <Compile Include="Gamepad\CursorEmulator.cs" />
-    <Compile Include="Gamepad\GamepadSupport.cs" />
-    <Compile Include="Gamepad\GamepadSupport.DependencyLoader.cs" />
+    <Compile Include="Gamepad\GamepadWhisperer.cs" />
+    <Compile Include="Gamepad\GamepadWhisperer.DependencyLoader.cs" />
     <Compile Include="Gamepad\Hooks.ADV.cs" />
     <Compile Include="Gamepad\Hooks.Camera.cs" />
     <Compile Include="Gamepad\Hooks.Canvas.cs" />
@@ -93,7 +94,6 @@
     <Compile Include="Navigation\CanvasState.cs" />
     <Compile Include="Navigation\CanvasCharmer.cs" />
     <Compile Include="Navigation\CharaListKeyboardFix.cs" />
-    <Compile Include="Metadata.cs" />
     <Compile Include="Navigation\CursorDrawer.cs" />
     <Compile Include="Navigation\PointerActionKeyboardFix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

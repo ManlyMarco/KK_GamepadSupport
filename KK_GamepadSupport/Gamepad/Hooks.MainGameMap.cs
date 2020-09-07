@@ -49,9 +49,9 @@ namespace KK_GamepadSupport.Gamepad
 
             public static float? GetMovementAngle()
             {
-                if (GamepadSupport.CurrentState.IsConnected)
+                if (GamepadWhisperer.CurrentState.IsConnected)
                 {
-                    var stickPosition = GamepadSupport.GetLeftStickDpadCombined();
+                    var stickPosition = GamepadWhisperer.GetLeftStickDpadCombined();
                     if (stickPosition.magnitude > 0.01f)
                     {
                         var absAngle = Vector2.Angle(Vector2.up, stickPosition);
@@ -67,9 +67,9 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isWalkHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.CurrentState.IsConnected)
+                if (GamepadWhisperer.CurrentState.IsConnected)
                 {
-                    var movementAmount = GamepadSupport.GetLeftStickDpadCombined().magnitude;
+                    var movementAmount = GamepadWhisperer.GetLeftStickDpadCombined().magnitude;
                     if (movementAmount > 0.01f && movementAmount < 0.9f)
                     {
                         __result = true;
@@ -89,7 +89,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isActionHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.A))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.A))
                 {
                     __result = true;
                     return false;
@@ -103,7 +103,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isCursorLockHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.B))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.B))
                 {
                     __result = true;
                     return false;
@@ -117,7 +117,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isViewChangeHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.X))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.X))
                 {
                     __result = true;
                     return false;
@@ -131,7 +131,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isViewTurnHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.LeftShoulder))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.LeftShoulder))
                 {
                     __result = true;
                     return false;
@@ -145,7 +145,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isCrouchHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButton(state => state.Buttons.RightShoulder))
+                if (GamepadWhisperer.GetButton(state => state.Buttons.RightShoulder))
                 {
                     __result = true;
                     return false;
@@ -159,7 +159,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool isViewPlayerHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
                 {
                     __result = true;
                     return false;

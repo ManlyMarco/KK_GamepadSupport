@@ -17,7 +17,7 @@ namespace KK_GamepadSupport.Gamepad
             public static bool SkipButtonHook(ref bool __result)
             {
                 if (_disabled) return true;
-                if (GamepadSupport.GetButton(state => state.Buttons.X))
+                if (GamepadWhisperer.GetButton(state => state.Buttons.X))
                 {
                     __result = true;
                     return false;
@@ -31,7 +31,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return true;
 
-                if (GamepadSupport.RightStickDown() && WithinAngle(GamepadSupport.GetRightStickAngle(), 90))
+                if (GamepadWhisperer.RightStickDown() && WithinAngle(GamepadWhisperer.GetRightStickAngle(), 90))
                 {
                     __result = true;
                     return false;
@@ -46,7 +46,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return true;
 
-                if (GamepadSupport.RightStickDown() && WithinAngle(GamepadSupport.GetRightStickAngle(), -90))
+                if (GamepadWhisperer.RightStickDown() && WithinAngle(GamepadWhisperer.GetRightStickAngle(), -90))
                 {
                     __result = true;
                     return false;
@@ -61,7 +61,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.RightStickDown() && WithinAngle(GamepadSupport.GetRightStickAngle(), 0))
+                if (GamepadWhisperer.RightStickDown() && WithinAngle(GamepadWhisperer.GetRightStickAngle(), 0))
                     __result.isKey = true;
             }
 
@@ -71,7 +71,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.RightStickDown() && WithinAngle(GamepadSupport.GetRightStickAngle(), 180))
+                if (GamepadWhisperer.RightStickDown() && WithinAngle(GamepadWhisperer.GetRightStickAngle(), 180))
                     __result.isKey = true;
             }
 
@@ -90,7 +90,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.B))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.B))
                     __result.isKey = true;
             }
 
@@ -100,7 +100,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.Y))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.Y))
                     __result.isKey = true;
             }
 
@@ -109,7 +109,7 @@ namespace KK_GamepadSupport.Gamepad
             public static void WindowNoneButtonCancel(ref KeyInput.Data __result)
             {
                 if (_disabled) return;
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.Y) || GamepadSupport.GetButtonDown(state => state.Buttons.B))
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.Y) || GamepadWhisperer.GetButtonDown(state => state.Buttons.B))
                     __result.isKey = true;
             }
 
@@ -119,7 +119,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.RightStickDown() || GamepadSupport.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
+                if (GamepadWhisperer.RightStickDown() || GamepadWhisperer.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
                     __result.isKey = true;
             }
 
@@ -129,7 +129,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                if (GamepadSupport.GetButtonDown(state => state.Buttons.B) || GamepadSupport.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
+                if (GamepadWhisperer.GetButtonDown(state => state.Buttons.B) || GamepadWhisperer.GetButtonDown(state => state.Buttons.RightStick) && !CursorEmulator.EmulatingCursor())
                     __result.isKey = true;
             }
         }

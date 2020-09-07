@@ -152,7 +152,7 @@ namespace KK_GamepadSupport.Navigation
             // Need to wait until after loading to avoid the canvas becoming visible mid-loading
             yield return new WaitWhile(() => Scene.Instance.IsNowLoadingFade);
 
-            CanvasCharmer.Logger.Log(LogLevel.Info, $"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
+            GamepadSupportPlugin.Logger.Log(LogLevel.Info, $"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
             target.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 

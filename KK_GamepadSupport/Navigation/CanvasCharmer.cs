@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
 using Manager;
 using StrayTech;
@@ -12,14 +10,8 @@ using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace KK_GamepadSupport.Navigation
 {
-    [BepInProcess("Koikatu")]
-    [BepInProcess("Koikatsu Party")]
-    [BepInDependency(KKAPI.KoikatuAPI.GUID, "1.12")]
-    [BepInPlugin(Guid, Guid, Metadata.Version)]
-    public partial class CanvasCharmer : BaseUnityPlugin
+    public partial class CanvasCharmer : MonoBehaviour
     {
-        private const string Guid = Metadata.BaseGuid + ".CanvasCharmer";
-
         private const float CursorTimeout = 90f;
         private const float CursorPokeStart = 4f;
 
@@ -30,16 +22,11 @@ namespace KK_GamepadSupport.Navigation
         private CursorDrawer CursorDrawer { get; } = new CursorDrawer();
         private CanvasManager CanvasManager { get; } = new CanvasManager();
 
-        internal static new ManualLogSource Logger;
         private static CanvasCharmer _instance;
-
-        public static ConfigEntry<bool> CanvasDebug { get; private set; }
 
         private void Awake()
         {
-            CanvasDebug = Config.Bind("Debug", "Show debug information", false, new ConfigDescription("", null, "Advanced"));
             _instance = this;
-            Logger = base.Logger;
 
             CursorDrawer.LoadTexture();
 
@@ -73,7 +60,7 @@ namespace KK_GamepadSupport.Navigation
             if (_timeSinceLastAction < CursorTimeout)
                 CursorDrawer.Draw(currentSelectedGameObject, _timeSinceLastAction > CursorPokeStart);
 
-            if (CanvasDebug.Value)
+            if (GamepadSupportPlugin.CanvasDebug.Value)
                 DrawCanvasList(currentSelectedGameObject);
         }
 
@@ -106,7 +93,7 @@ namespace KK_GamepadSupport.Navigation
                 {
                     if (!CanvasManager.IsSelectionValid(selected))
                     {
-                        if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "invalid selection");
+                        if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.Log(LogLevel.Message, "invalid selection");
                         selected = null;
                     }
                 }
@@ -124,7 +111,7 @@ namespace KK_GamepadSupport.Navigation
             {
                 if (!CanvasManager.IsSelectionValid(selected))
                 {
-                    if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "invalid selection");
+                    if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.Log(LogLevel.Message, "invalid selection");
                     selected = null;
                 }
             }
@@ -139,14 +126,14 @@ namespace KK_GamepadSupport.Navigation
 
                 if (selectable == null)
                 {
-                    if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "not a Selectable");
+                    if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.Log(LogLevel.Message, "not a Selectable");
                     CanvasManager.SelectFirstControl();
                 }
                 else
                 {
                     if (!selectable.isActiveAndEnabled)
                     {
-                        if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "object not isActiveAndEnabled");
+                        if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.Log(LogLevel.Message, "object not isActiveAndEnabled");
                         // Needed for some transitions, e.g. live mode
                         CanvasManager.UpdateCanvases();
                         CanvasManager.SelectFirstControl();

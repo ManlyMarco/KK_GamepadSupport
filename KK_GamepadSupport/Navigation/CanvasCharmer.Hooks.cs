@@ -75,7 +75,7 @@ namespace KK_GamepadSupport.Navigation
 
             public static void InitHooks()
             {
-                var hi = Harmony.CreateAndPatchAll(typeof(Hooks), Guid);
+                var hi = Harmony.CreateAndPatchAll(typeof(Hooks), GamepadSupportPlugin.Guid + ".CanvasCharmer");
 
                 // Fix keyboard navigation not working in chara/map lists
                 var handlerPost = AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPost));

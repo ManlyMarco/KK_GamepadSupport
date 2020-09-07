@@ -1,36 +1,25 @@
 ﻿using System;
-using BepInEx;
 using BepInEx.Logging;
 using UnityEngine;
 using XInputDotNetPure;
 
 namespace KK_GamepadSupport.Gamepad
 {
-    [BepInProcess("Koikatu")]
-    [BepInProcess("Koikatsu Party")]
-    [BepInDependency(KKAPI.KoikatuAPI.GUID, "1.12")]
-    [BepInPlugin(Guid, Guid, Metadata.Version)]
     // Run before any other MonoBehaviours
     [DefaultExecutionOrder(-100)]
-    public partial class GamepadSupport : BaseUnityPlugin
+    public partial class GamepadWhisperer : MonoBehaviour
     {
-        public const string Guid = Metadata.BaseGuid + ".GamepadController";
-
-        internal static new ManualLogSource Logger;
-
         private static GamePadState _currentState, _previousState;
 
         private void Awake()
         {
-            Logger = base.Logger;
-
             try
             {
                 DependencyLoader.LoadDependencies();
             }
             catch (Exception ex)
             {
-                Logger.Log(LogLevel.Message | LogLevel.Error, "GamepadSupport plugin failed to load: " + ex.Message);
+                GamepadSupportPlugin.Logger.Log(LogLevel.Message | LogLevel.Error, "GamepadSupport plugin failed to load: " + ex.Message);
                 enabled = false;
                 return;
             }
