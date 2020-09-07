@@ -14,6 +14,7 @@ namespace KK_GamepadSupport.Navigation
 {
     [BepInProcess("Koikatu")]
     [BepInProcess("Koikatsu Party")]
+    [BepInDependency(KKAPI.KoikatuAPI.GUID, "1.12")]
     [BepInPlugin(Guid, Guid, Metadata.Version)]
     public partial class CanvasCharmer : BaseUnityPlugin
     {
@@ -36,7 +37,7 @@ namespace KK_GamepadSupport.Navigation
 
         private void Awake()
         {
-            CanvasDebug = Config.Bind("Debug", "Show debug information", false, new ConfigDescription(null, null, "Advanced"));
+            CanvasDebug = Config.Bind("Debug", "Show debug information", false, new ConfigDescription("", null, "Advanced"));
             _instance = this;
             Logger = base.Logger;
 

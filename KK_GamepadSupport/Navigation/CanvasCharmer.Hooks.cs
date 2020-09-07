@@ -98,9 +98,13 @@ namespace KK_GamepadSupport.Navigation
                 }
 
                 // KKP specific, has a MonoB argument instead of GameObj like others
-                var kkpList = AccessTools.Method(Type.GetType("FileListUI.ThreadFileListCtrl`2[[ChaCustom.CustomFileInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[ChaCustom.CustomFileInfoComponent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler");
-                if (kkpList != null)
-                    hi.Patch(kkpList, null, new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
+                var listType = Type.GetType("FileListUI.ThreadFileListCtrl`2[[ChaCustom.CustomFileInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[ChaCustom.CustomFileInfoComponent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
+                if (listType != null)
+                {
+                    var kkpList = AccessTools.Method(listType, "SetToggleHandler");
+                    if (kkpList != null)
+                        hi.Patch(kkpList, null, new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
+                }
 
                 // Fix keyboard navigation not working in HSprite / h scene
                 var hspriteTargets = AccessTools.GetDeclaredMethods(typeof(HSprite));
