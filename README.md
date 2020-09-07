@@ -1,11 +1,14 @@
 # Gamepad and keyboard support for Koikatsu!
-Mod that adds support for using XInput-compatible gamepads (aka Xbox 360 controllers) with the entire main game (menus, school mode, H scenes, maker, etc.). It also adds support for navigating the UI with keyboard (Arrow keys and Enter). Studio is not supported at all.
+Mod that adds support for using XInput-compatible gamepads (aka Xbox 360 controllers) with the entire main game (menus, school mode, H scenes, maker, etc.). 
+It also adds support for navigating the UI with keyboard (Arrow keys and Enter). 
+At the moment studio is not supported.
 
 ## Installation
-1. Make sure your game is updated and has [BepInEx v4.1](https://github.com/BepInEx/BepInEx), installed.
-2. Download the latest release from [releases](https://github.com/ManlyMarco/KK_GamepadSupport/releases).
-3. Extract contents of the archive directly into your game's directory.
-4. Start Koikatu.exe. Once in main menu try pressing arrow keys on your keyboard and Dpad on your controller.
+1. Make sure your game is updated and has at least [BepInEx v5.1](https://github.com/BepInEx/BepInEx) and [KKAPI v1.12](https://github.com/IllusionMods/IllusionModdingAPI), installed.
+2. Download the latest release.
+3. Remove `XInputInterface.dll`, `BepInEx\KK_GamepadSupport.dll` and `BepInEx\XInputDotNetPure.dll` from your game directory if you have them.
+4. Extract contents of the release archive directly into your game's directory.
+5. Start the game. Once in main menu try pressing arrow keys on your keyboard and/or Dpad on your controller. A cursor should appear.
 
 ## Controls
 List of controls for different game modes. General controls apply to most of other modes.
