@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using UnityEngine;
@@ -8,10 +9,11 @@ namespace KK_GamepadSupport.Gamepad
 {
     [BepInProcess("Koikatu")]
     [BepInProcess("Koikatsu Party")]
+    [BepInDependency(KKAPI.KoikatuAPI.GUID, "1.12")]
     [BepInPlugin(Guid, Guid, Metadata.Version)]
     // Run before any other MonoBehaviours
     [DefaultExecutionOrder(-100)]
-    public class GamepadSupport : BaseUnityPlugin
+    public partial class GamepadSupport : BaseUnityPlugin
     {
         public const string Guid = Metadata.BaseGuid + ".GamepadController";
 
@@ -22,6 +24,17 @@ namespace KK_GamepadSupport.Gamepad
         private void Awake()
         {
             Logger = base.Logger;
+
+            try
+            {
+                DependencyLoader.LoadDependencies();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Message | LogLevel.Error, "GamepadSupport plugin failed to load: " + ex.Message);
+                enabled = false;
+                return;
+            }
 
             _currentState = _previousState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.IndependentAxes);
             Hooks.InitHooks();
@@ -51,7 +64,7 @@ namespace KK_GamepadSupport.Gamepad
 
                 // Simulate right click for cancelling out of menus
                 // Ideal would be hooking Input.GetMouseKeyDown but it requires a detour
-                if(GetButtonDown(state => state.Buttons.B))
+                if (GetButtonDown(state => state.Buttons.B))
                 {
                     CursorEmulator.RightDown();
                     CursorEmulator.RightUp();

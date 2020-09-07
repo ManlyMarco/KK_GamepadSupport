@@ -15,7 +15,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\bin\BepInEx\plugins\GamepadSupport\</OutputPath>
     <DefineConstants>TRACE;DEBUG;KK</DefineConstants>
     <DebugType>embedded</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\bin\BepInEx\plugins\GamepadSupport\</OutputPath>
     <DefineConstants>TRACE;KK</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>embedded</DebugType>
@@ -53,6 +53,10 @@
       <HintPath>..\packages\IllusionLibs.BepInEx.Harmony.2.0.3.1\lib\net35\BepInEx.Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="KKAPI, Version=1.13.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IllusionModdingAPI.KKAPI.1.13.1\lib\net35\KKAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="TextMeshPro-1.0.55.56.0b12, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -67,7 +71,8 @@
       <HintPath>..\packages\IllusionLibs.Koikatu.UnityEngine.UI.5.6.2\lib\net35\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="XInputDotNetPure">
+    <Reference Include="XInputDotNetPure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\XInputDotNet-x64-v2017.04-2\XInputDotNetPure.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -75,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Gamepad\CursorEmulator.cs" />
     <Compile Include="Gamepad\GamepadSupport.cs" />
+    <Compile Include="Gamepad\GamepadSupport.DependencyLoader.cs" />
     <Compile Include="Gamepad\Hooks.ADV.cs" />
     <Compile Include="Gamepad\Hooks.Camera.cs" />
     <Compile Include="Gamepad\Hooks.Canvas.cs" />
@@ -91,21 +97,30 @@
     <Compile Include="Navigation\CursorDrawer.cs" />
     <Compile Include="Navigation\PointerActionKeyboardFix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="..\lib\XInputDotNet-x64-v2017.04-2\XInputInterface.lib">
+      <Link>XInputInterface.lib</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\LICENSE">
+      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
-    <None Include="Resources\pointer.png_" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\lib\XInputDotNet-x64-v2017.04-2\XInputDotNetPure.dll">
+      <Link>XInputDotNetPure.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\pointer.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

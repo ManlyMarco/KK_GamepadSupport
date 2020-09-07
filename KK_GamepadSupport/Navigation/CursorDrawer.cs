@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using KKAPI.Utilities;
+using UnityEngine;
 
 namespace KK_GamepadSupport.Navigation
 {
@@ -8,16 +9,16 @@ namespace KK_GamepadSupport.Navigation
 
         public void LoadTexture()
         {
-            _pointer = new Texture2D(1, 1, TextureFormat.DXT5, false, false);
-            _pointer.LoadImage(Properties.Resources.pointer);
-            Properties.Resources.ResourceManager.ReleaseAllResources();
+            _pointer = new Texture2D(1, 1, TextureFormat.ARGB32, false, false);
+            var bytes = ResourceUtils.GetEmbeddedResource("pointer.png", typeof(CursorDrawer).Assembly);
+            _pointer.LoadImage(bytes);
 
-            const int recommendedHeight = 900;
+            const int idealResolutionH = 1800;
 
-            if (Mathf.Abs(Screen.height - recommendedHeight) > 100)
+            if (Mathf.Abs(Screen.height - idealResolutionH) >= 200)
             {
-                var scaleFactor = Screen.height / recommendedHeight;
-                _pointer.Resize(_pointer.width * scaleFactor, _pointer.height * scaleFactor);
+                var scaleFactor = (float)Screen.height / idealResolutionH;
+                TextureScale.Bilinear(_pointer, (int)(_pointer.width * scaleFactor), (int)(_pointer.height * scaleFactor));
                 _pointer.Apply(false);
             }
         }
@@ -27,7 +28,8 @@ namespace KK_GamepadSupport.Navigation
             if (currentSelectedGameObject == null) return;
             if (Manager.Scene.Instance.IsNowLoadingFade) return;
 
-            var camera = Camera.current ?? Camera.main;
+            var camera = Camera.current;
+            if (camera == null) camera = Camera.main;
             if (camera == null) return;
 
             var r = RectTransformToScreenSpace(currentSelectedGameObject.GetComponent<RectTransform>());
