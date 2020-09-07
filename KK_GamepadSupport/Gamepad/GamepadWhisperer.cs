@@ -140,7 +140,7 @@ namespace KK_GamepadSupport.Gamepad
                 return false;
 
             return Mathf.Approximately(_previousState.ThumbSticks.Right.X, 0f) && Mathf.Approximately(_previousState.ThumbSticks.Right.Y, 0f)
-               && (!Mathf.Approximately(_currentState.ThumbSticks.Right.X, 0f) || !Mathf.Approximately(_currentState.ThumbSticks.Right.Y, 0f));
+                                                                               && (!Mathf.Approximately(_currentState.ThumbSticks.Right.X, 0f) || !Mathf.Approximately(_currentState.ThumbSticks.Right.Y, 0f));
         }
     }
 }

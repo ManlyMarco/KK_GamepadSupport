@@ -70,9 +70,13 @@ namespace KK_GamepadSupport.Gamepad
 
             if (EmulatingCursor())
             {
-                var amount = GamepadWhisperer.GetRightStick() * Time.deltaTime * 700;
-                if (amount.magnitude > 0)
+                var rightStick = GamepadWhisperer.GetRightStick();
+                if (rightStick.magnitude > 0)
+                {
+                    var expStick = new Vector2(rightStick.x * Mathf.Abs(rightStick.x), rightStick.y * Mathf.Abs(rightStick.y));
+                    var amount = expStick * Time.deltaTime * 700;
                     MoveCursor(amount);
+                }
 
                 if (rPressed && !_previousR)
                     LeftDown();

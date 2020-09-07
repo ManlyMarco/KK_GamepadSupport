@@ -43,20 +43,20 @@ namespace KK_GamepadSupport.Gamepad
 
             public static float CustomGetAxis(string axisName)
             {
-                if(!CursorEmulator.EmulatingCursor())
+                if (!CursorEmulator.EmulatingCursor())
                 {
                     switch (axisName)
                     {
                         case "Mouse X":
                             var x = GamepadWhisperer.CurrentState.ThumbSticks.Right.X;
                             if (Mathf.Abs(x) > 0.01f)
-                                return x;
+                                return x * Mathf.Abs(x);
                             break;
 
                         case "Mouse Y":
                             var y = GamepadWhisperer.CurrentState.ThumbSticks.Right.Y;
                             if (Mathf.Abs(y) > 0.01f)
-                                return y;
+                                return y * Mathf.Abs(y);
                             break;
 
                         case "Mouse ScrollWheel":
@@ -84,7 +84,7 @@ namespace KK_GamepadSupport.Gamepad
                 if (OnProcessCameraControls(__instance))
                     __result = true;
             }
-            
+
             private static readonly FieldInfo _camDatField = AccessTools.Field(typeof(BaseCameraControl_Ver2), "CamDat");
             private static readonly FieldInfo _transBaseField = AccessTools.Field(typeof(BaseCameraControl_Ver2), "transBase");
 
@@ -99,8 +99,8 @@ namespace KK_GamepadSupport.Gamepad
                 const float speedMultiplier = 1f;
 
                 var stick = GamepadWhisperer.CurrentState.ThumbSticks.Right;
-                var axis = stick.X;
-                var axis2 = stick.Y;
+                var axis = stick.X * Mathf.Abs(stick.X);
+                var axis2 = stick.Y * Mathf.Abs(stick.Y);
 
                 if (Mathf.Abs(axis2) < 0.01f && Mathf.Abs(axis) < 0.01f)
                     return false;
