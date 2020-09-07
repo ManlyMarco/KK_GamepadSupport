@@ -93,6 +93,10 @@ namespace KK_GamepadSupport.Navigation
             var input = CurrentEventSystem.currentInputModule.input;
             if (Mathf.Abs(input.GetAxisRaw("Horizontal")) > 0.01f || Mathf.Abs(input.GetAxisRaw("Vertical")) > 0.01f || input.GetButtonDown("Submit"))
             {
+                // Do not show the cursor or select anything if we are currently editing a text field
+                if (selected != null && selected.GetComponent<InputField>()?.isFocused == true)
+                    return;
+
                 _timeSinceLastAction = 0f;
             }
             else
