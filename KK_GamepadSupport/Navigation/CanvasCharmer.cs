@@ -131,7 +131,7 @@ namespace KK_GamepadSupport.Navigation
 
             if (selected == null)
             {
-                CanvasManager.SelectControl();
+                CanvasManager.SelectFirstControl();
             }
             else
             {
@@ -140,7 +140,7 @@ namespace KK_GamepadSupport.Navigation
                 if (selectable == null)
                 {
                     if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "not a Selectable");
-                    CanvasManager.SelectControl();
+                    CanvasManager.SelectFirstControl();
                 }
                 else
                 {
@@ -149,7 +149,7 @@ namespace KK_GamepadSupport.Navigation
                         if (CanvasDebug.Value) Logger.Log(LogLevel.Message, "object not isActiveAndEnabled");
                         // Needed for some transitions, e.g. live mode
                         CanvasManager.UpdateCanvases();
-                        CanvasManager.SelectControl();
+                        CanvasManager.SelectFirstControl();
                     }
                 }
             }
@@ -194,7 +194,7 @@ namespace KK_GamepadSupport.Navigation
             }
 
             CanvasManager.UpdateCanvases();
-            CanvasManager.SelectControl();
+            CanvasManager.SelectFirstControl();
         }
 
         private static bool SceneIsLoading()

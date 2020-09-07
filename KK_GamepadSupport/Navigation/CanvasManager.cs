@@ -13,12 +13,12 @@ namespace KK_GamepadSupport.Navigation
     public class CanvasManager
     {
         // Prefer to select controls from these canvases when looking for controls to select
-        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> { "CvsMainMenu", "ActionMenuCanvas" };
+        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> { "CvsMainMenu", "ActionMenuCanvas", "Canvas_Main" };
 
         private readonly List<CanvasState> _canvases = new List<CanvasState>();
 
         private static EventSystem CurrentEventSystem => EventSystem.current;
-        
+
         /// <summary>
         /// Get all components selectable by keyboard/gamepad input, in the order of input capure importance
         /// </summary>
@@ -26,7 +26,7 @@ namespace KK_GamepadSupport.Navigation
         /// <param name="topOnly">Only return results from the topmost canvas instead of all valid canvases</param>
         public IEnumerable<Selectable> GetAllSelectables(bool includeInactive, bool topOnly)
         {
-            var canvases = GetSelectableCanvases(topOnly).OrderByDescending(x => _preferredCanvasNames.Contains(x.Canvas.name));
+            var canvases = GetSelectableCanvases(topOnly);
             return canvases.SelectMany(c => c.GetSelectables(includeInactive));
         }
 
@@ -45,7 +45,7 @@ namespace KK_GamepadSupport.Navigation
             var ordered = _canvases.OrderByDescending(x => x.Canvas.isActiveAndEnabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
             return topOnly ? ordered.Take(1) : ordered;
         }
-        
+
         /// <summary>
         /// Get all valid canvases that can be selected by keyboard/gamepad input, in the order of input capure importance
         /// </summary>
@@ -62,7 +62,8 @@ namespace KK_GamepadSupport.Navigation
                         if (anyFullscreen) return false;
                         if (c.IsFullScreen) anyFullscreen = true;
                         return true;
-                    });
+                    })
+                .OrderByDescending(x => _preferredCanvasNames.Contains(x.Canvas.name));
         }
 
         /// <summary>
@@ -77,11 +78,16 @@ namespace KK_GamepadSupport.Navigation
             return selectableCanvases.Any(x => x.Canvas == selected.GetComponentInParent<Canvas>());
         }
 
-        public void SelectControl()
+        public void SelectFirstControl()
         {
             if (_destroyed) return;
 
-            var toSelect = GetAllSelectables(false, false).FirstOrDefault(x => x.isActiveAndEnabled);
+            var canvases = GetSelectableCanvases();
+            var cmps = canvases
+                .Where(x => x.Canvas.name != "ActionCycleCanvas") // If this canvas gets selected first, there's danger of accidentally pressing A and advancing to next period
+                .SelectMany(c => c.GetSelectables(false));
+
+            var toSelect = cmps.FirstOrDefault(x => x.isActiveAndEnabled);
             if (toSelect != null)
             {
                 //Logger.Log(LogLevel.Info, "select " + toSelect.transform.FullPath());
