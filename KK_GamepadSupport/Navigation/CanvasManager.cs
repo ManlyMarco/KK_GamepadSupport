@@ -7,7 +7,6 @@ using StrayTech;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Logger = BepInEx.Logger;
 
 namespace KK_GamepadSupport.Navigation
 {
@@ -28,7 +27,7 @@ namespace KK_GamepadSupport.Navigation
             _canvases.RemoveAll(x =>
             {
                 var shouldRemove = x.Canvas == null;
-                if(shouldRemove) x.Dispose();
+                if (shouldRemove) x.Dispose();
                 return shouldRemove;
             });
             var ordered = _canvases.OrderByDescending(x => x.Canvas.isActiveAndEnabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
@@ -75,7 +74,7 @@ namespace KK_GamepadSupport.Navigation
             else
             {
                 //Logger.Log(LogLevel.Info, "select null");
-                if (CurrentEventSystem?.currentSelectedGameObject != null)
+                if (CurrentEventSystem != null && CurrentEventSystem.currentSelectedGameObject != null)
                     CurrentEventSystem.SetSelectedGameObject(null);
             }
         }
@@ -86,8 +85,8 @@ namespace KK_GamepadSupport.Navigation
 
             var canvases = GetCanvases(false).ToList();
             var fullscreenCanvas = canvases.Find(x => x.IsFullScreen);
-            var minSort = fullscreenCanvas != null ? fullscreenCanvas.SortOrder : int.MinValue;
-            var minRender = fullscreenCanvas != null ? fullscreenCanvas.RenderOrder : int.MinValue;
+            var minSort = fullscreenCanvas?.SortOrder ?? int.MinValue;
+            var minRender = fullscreenCanvas?.RenderOrder ?? int.MinValue;
 
             var anyChanged = false;
             foreach (var state in canvases)
@@ -107,7 +106,10 @@ namespace KK_GamepadSupport.Navigation
 
             ClearCanvasStates();
 
-            foreach (var canvase in Object.FindObjectsOfType<Canvas>().Concat(Game.Instance?.actScene?.AdvScene?.GetComponentsInChildren<Canvas>(true) ?? Enumerable.Empty<Canvas>()).Distinct())
+            var canvases = Object.FindObjectsOfType<Canvas>().AsEnumerable();
+            if (Game.IsInstance() && Game.Instance.actScene != null && Game.Instance.actScene.AdvScene != null)
+                canvases = canvases.Union(Game.Instance.actScene.AdvScene.GetComponentsInChildren<Canvas>(true)); // Also finds disabled canvases, necessary in some cases
+            foreach (var canvase in canvases)
             {
                 var cs = new CanvasState(canvase);
                 if (cs.Raycaster != null && cs.HasSelectables())
@@ -128,7 +130,7 @@ namespace KK_GamepadSupport.Navigation
             // Need to wait until after loading to avoid the canvas becoming visible mid-loading
             yield return new WaitWhile(() => Scene.Instance.IsNowLoadingFade);
 
-            Logger.Log(LogLevel.Info, $"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
+            CanvasCharmer.Logger.Log(LogLevel.Info, $"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
             target.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using StrayTech;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class Camera
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 // Main game camera control
                 var newMethodTpl = new HarmonyMethod(AccessTools.Method(typeof(Camera), nameof(CameraStateTpl)));

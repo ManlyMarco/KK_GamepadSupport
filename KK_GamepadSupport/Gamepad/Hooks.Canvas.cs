@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using UnityEngine.EventSystems;
 using XInputDotNetPure;
 
@@ -8,7 +8,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class Canvas
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 hi.PatchAll(typeof(Canvas));
             }

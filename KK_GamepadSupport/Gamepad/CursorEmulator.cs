@@ -57,7 +57,7 @@ namespace KK_GamepadSupport.Gamepad
                 {
                     _enabled = !_enabled;
 
-                    BepInEx.Logger.Log(LogLevel.Message, "Cursor mode " + (_enabled ? "ON (LTrig and RTrig for mouse buttons)" : "OFF"));
+                    GamepadSupport.Logger.Log(LogLevel.Message, "Cursor mode " + (_enabled ? "ON (LTrig and RTrig for mouse buttons)" : "OFF"));
 
                     // Fix stuck keys
                     if (!_enabled)

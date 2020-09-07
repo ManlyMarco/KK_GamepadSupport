@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using Manager;
 using StrayTech;
@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Logger = BepInEx.Logger;
 using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace KK_GamepadSupport.Navigation
@@ -30,15 +29,16 @@ namespace KK_GamepadSupport.Navigation
         private CursorDrawer CursorDrawer { get; } = new CursorDrawer();
         private CanvasManager CanvasManager { get; } = new CanvasManager();
 
+        internal static new ManualLogSource Logger;
         private static CanvasCharmer _instance;
 
-        [DisplayName("Show debug information")]
-        public static ConfigWrapper<bool> CanvasDebug { get; private set; }
+        public static ConfigEntry<bool> CanvasDebug { get; private set; }
 
         private void Awake()
         {
-            CanvasDebug = new ConfigWrapper<bool>("CanvasDebug", this, false);
+            CanvasDebug = Config.Bind("Debug", "Show debug information", false, new ConfigDescription(null, null, "Advanced"));
             _instance = this;
+            Logger = base.Logger;
 
             CursorDrawer.LoadTexture();
 
@@ -67,7 +67,7 @@ namespace KK_GamepadSupport.Navigation
 
         private void OnGUI()
         {
-            var currentSelectedGameObject = CurrentEventSystem?.currentSelectedGameObject;
+            var currentSelectedGameObject = CurrentEventSystem == null ? null : CurrentEventSystem.currentSelectedGameObject;
 
             if (_timeSinceLastAction < CursorTimeout)
                 CursorDrawer.Draw(currentSelectedGameObject, _timeSinceLastAction > CursorPokeStart);
@@ -181,7 +181,12 @@ namespace KK_GamepadSupport.Navigation
             yield return null;
             yield return null;
             if (isTalk)
-                yield return new WaitWhile(() => Game.Instance.actScene?.AdvScene?.transform.Find("Canvas_Main") == null);
+            {
+                yield return new WaitWhile(() =>
+                    Game.Instance.actScene == null ||
+                    Game.Instance.actScene.AdvScene == null ||
+                    Game.Instance.actScene.AdvScene.transform.Find("Canvas_Main") == null);
+            }
 
             CanvasManager.UpdateCanvases();
             CanvasManager.SelectControl();

@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace KK_GamepadSupport.Gamepad
@@ -7,7 +7,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class H
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 hi.PatchAll(typeof(H));
             }

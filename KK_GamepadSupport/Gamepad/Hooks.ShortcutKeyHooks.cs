@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Harmony;
+using HarmonyLib;
 using Illusion.Component;
 using UnityEngine;
 using XInputDotNetPure;
@@ -11,7 +11,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class ShortcutKeyHooks
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 hi.PatchAll(typeof(ShortcutKeyHooks));
             }

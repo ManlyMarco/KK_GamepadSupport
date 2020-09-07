@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Harmony;
+using HarmonyLib;
 using Illusion.Component.UI;
 using UGUI_AssistLibrary;
 using UniRx;
@@ -22,7 +22,7 @@ namespace KK_GamepadSupport.Navigation
             }
             else
             {
-                GetComponent<UIAL_EventTrigger>().triggers.First(x=>x.eventID == EventTriggerType.PointerEnter).callback.Invoke(null);
+                GetComponent<UIAL_EventTrigger>().triggers.First(x => x.eventID == EventTriggerType.PointerEnter).callback.Invoke(null);
             }
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using ADV;
-using Harmony;
+using HarmonyLib;
 using SceneAssist;
 using TMPro;
 using UnityEngine;
@@ -75,9 +75,7 @@ namespace KK_GamepadSupport.Navigation
 
             public static void InitHooks()
             {
-                var hi = HarmonyInstance.Create(Guid);
-
-                hi.PatchAll(typeof(Hooks));
+                var hi = Harmony.CreateAndPatchAll(typeof(Hooks), Guid);
 
                 // Fix keyboard navigation not working in chara/map lists
                 var handlerPost = AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPost));

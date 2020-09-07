@@ -1,4 +1,6 @@
-﻿using Harmony;
+﻿
+using BepInEx.Logging;
+using HarmonyLib;
 
 namespace KK_GamepadSupport.Gamepad
 {
@@ -6,7 +8,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         public static void InitHooks()
         {
-            var hi = HarmonyInstance.Create(GamepadSupport.Guid);
+            var hi = new Harmony(GamepadSupport.Guid);
             Camera.InitHooks(hi);
             Canvas.InitHooks(hi);
             MainGameMap.InitHooks(hi);
@@ -20,5 +22,7 @@ namespace KK_GamepadSupport.Gamepad
         {
             _disabled = true;
         }
+
+        private static ManualLogSource Logger => GamepadSupport.Logger;
     }
 }

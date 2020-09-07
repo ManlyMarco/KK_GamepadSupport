@@ -5,9 +5,8 @@ using System.Reflection.Emit;
 using ActionGame;
 using ActionGame.Chara.Mover;
 using BepInEx.Logging;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-using Logger = BepInEx.Logger;
 
 namespace KK_GamepadSupport.Gamepad
 {
@@ -15,7 +14,7 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class MainGameMap
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 hi.PatchAll(typeof(MainGameMap));
             }
@@ -41,7 +40,8 @@ namespace KK_GamepadSupport.Gamepad
                 }
                 else
                 {
-                    Logger.Log(LogLevel.Error, "Failed to patch, could not find transplier target\n" + new StackTrace());
+                    Logger.Log(LogLevel.Error,
+                        "Failed to patch, could not find transplier target\n" + new StackTrace());
                 }
 
                 return list;
@@ -63,8 +63,7 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isWalk), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isWalk), MethodType.Getter)]
             public static bool isWalkHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -77,6 +76,7 @@ namespace KK_GamepadSupport.Gamepad
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -85,8 +85,7 @@ namespace KK_GamepadSupport.Gamepad
             #region Buttons
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isAction), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isAction), MethodType.Getter)]
             public static bool isActionHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -95,12 +94,12 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isCursorLock), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isCursorLock), MethodType.Getter)]
             public static bool isCursorLockHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -109,12 +108,12 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isViewChange), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isViewChange), MethodType.Getter)]
             public static bool isViewChangeHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -123,12 +122,12 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isViewTurn), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isViewTurn), MethodType.Getter)]
             public static bool isViewTurnHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -137,12 +136,12 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isCrouch), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isCrouch), MethodType.Getter)]
             public static bool isCrouchHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -151,12 +150,12 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(ActionInput))]
-            [HarmonyPatch(nameof(ActionInput.isViewPlayer), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(ActionInput), nameof(ActionInput.isViewPlayer), MethodType.Getter)]
             public static bool isViewPlayerHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -165,6 +164,7 @@ namespace KK_GamepadSupport.Gamepad
                     __result = true;
                     return false;
                 }
+
                 return true;
             }
 

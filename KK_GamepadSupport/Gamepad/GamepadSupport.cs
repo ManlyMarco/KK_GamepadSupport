@@ -1,5 +1,6 @@
 ﻿using System;
 using BepInEx;
+using BepInEx.Logging;
 using UnityEngine;
 using XInputDotNetPure;
 
@@ -14,10 +15,14 @@ namespace KK_GamepadSupport.Gamepad
     {
         public const string Guid = Metadata.BaseGuid + ".GamepadController";
 
+        internal static new ManualLogSource Logger;
+
         private static GamePadState _currentState, _previousState;
 
         private void Awake()
         {
+            Logger = base.Logger;
+
             _currentState = _previousState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.IndependentAxes);
             Hooks.InitHooks();
         }
@@ -37,6 +42,7 @@ namespace KK_GamepadSupport.Gamepad
             {
                 _previousState = _currentState;
                 enabled = false;
+                // Need to use invoke because coroutines don't run on disabled objects
                 InvokeRepeating(nameof(TryWakeUp), 4f, 4f);
             }
             else

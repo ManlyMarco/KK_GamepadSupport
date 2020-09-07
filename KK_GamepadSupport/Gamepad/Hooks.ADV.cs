@@ -1,5 +1,5 @@
 ﻿using ADV;
-using Harmony;
+using HarmonyLib;
 
 namespace KK_GamepadSupport.Gamepad
 {
@@ -7,14 +7,13 @@ namespace KK_GamepadSupport.Gamepad
     {
         private static class ADV
         {
-            public static void InitHooks(HarmonyInstance hi)
+            public static void InitHooks(Harmony hi)
             {
                 hi.PatchAll(typeof(ADV));
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(KeyInput))]
-            [HarmonyPatch(nameof(KeyInput.SkipButton), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(KeyInput), nameof(KeyInput.SkipButton), MethodType.Getter)]
             public static bool SkipButtonHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -27,8 +26,7 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(KeyInput))]
-            [HarmonyPatch(nameof(KeyInput.BackLogTextPageNext), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(KeyInput), nameof(KeyInput.BackLogTextPageNext), MethodType.Getter)]
             public static bool BackLogTextPageNextHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -43,8 +41,7 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(KeyInput))]
-            [HarmonyPatch(nameof(KeyInput.BackLogTextPageBack), PropertyMethod.Getter)]
+            [HarmonyPatch(typeof(KeyInput), nameof(KeyInput.BackLogTextPageBack), MethodType.Getter)]
             public static bool BackLogTextPageBackHook(ref bool __result)
             {
                 if (_disabled) return true;
@@ -93,8 +90,8 @@ namespace KK_GamepadSupport.Gamepad
             {
                 if (_disabled) return;
 
-                    if (GamepadSupport.GetButtonDown(state => state.Buttons.B))
-                        __result.isKey = true;
+                if (GamepadSupport.GetButtonDown(state => state.Buttons.B))
+                    __result.isKey = true;
             }
 
             [HarmonyPostfix]
