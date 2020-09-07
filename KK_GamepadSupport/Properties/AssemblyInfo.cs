@@ -6,8 +6,9 @@ using KK_GamepadSupport;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("KK_GamepadSupport")]
-[assembly: AssemblyCompany("ManlyMarco")]
+[assembly: AssemblyCompany("https://github.com/ManlyMarco/KK_GamepadSupport")]
 [assembly: AssemblyProduct("KK_GamepadSupport")]
+[assembly: AssemblyDescription("Support for using gamepads and keyboard to play the game")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
