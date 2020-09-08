@@ -1,7 +1,10 @@
 # Gamepad and keyboard support for Koikatsu!
 Mod that adds support for using XInput-compatible gamepads (aka Xbox 360 controllers) with the entire main game (menus, school mode, H scenes, maker, etc.). 
 It also adds support for navigating the UI with keyboard (Arrow keys and Enter). 
+
 At the moment studio is not supported.
+
+You can watch a preview video [here](https://www.youtube.com/watch?v=M0_NnL3b8Pg).
 
 ## Installation
 1. Make sure your game is updated and has at least [BepInEx v5.1](https://github.com/BepInEx/BepInEx) and [KKAPI v1.12](https://github.com/IllusionMods/IllusionModdingAPI), installed.
