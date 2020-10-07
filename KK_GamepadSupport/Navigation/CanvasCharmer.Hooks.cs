@@ -75,6 +75,11 @@ namespace KK_GamepadSupport.Navigation
 
             public static void InitHooks()
             {
+                MethodInfo TryMethod(Type type, string name, Type[] parameters = null, Type[] generics = null)
+                {
+                    return type == null ? null : AccessTools.Method(type, name, parameters, generics);
+                }
+
                 var hi = Harmony.CreateAndPatchAll(typeof(Hooks), GamepadSupportPlugin.Guid + ".CanvasCharmer");
 
                 // Fix keyboard navigation not working in chara/map lists
@@ -82,15 +87,15 @@ namespace KK_GamepadSupport.Navigation
                 foreach (var methodInfo in new[]
                 {
                     // Some are KK or KKP specific, hence why not using typeof
-                    AccessTools.Method(Type.GetType("ActionGame.ClassRoomFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}) ,
-                    AccessTools.Method(Type.GetType("StaffRoom.StaffRoomCharaListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
-                    AccessTools.Method(Type.GetType("StaffRoom.StaffRoomMapListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("ActionGame.ClassRoomFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}) ,
+                    TryMethod(Type.GetType("StaffRoom.StaffRoomCharaListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("StaffRoom.StaffRoomMapListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
 
-                    AccessTools.Method(Type.GetType("ChaCustom.CustomSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
-                    AccessTools.Method(Type.GetType("ExternalFile.ExternalFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
-                    AccessTools.Method(Type.GetType("EmblemSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("ChaCustom.CustomSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("ExternalFile.ExternalFileListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("EmblemSelectListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
 
-                    AccessTools.Method(Type.GetType("UGUI_AssistLibrary.UIAL_ListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
+                    TryMethod(Type.GetType("UGUI_AssistLibrary.UIAL_ListCtrl, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false), "SetToggleHandler", new[]{typeof(GameObject)}),
                 })
                 {
                     if (methodInfo != null)
