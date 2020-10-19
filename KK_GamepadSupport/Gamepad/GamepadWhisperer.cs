@@ -13,17 +13,6 @@ namespace KK_GamepadSupport.Gamepad
 
         private void Awake()
         {
-            try
-            {
-                DependencyLoader.LoadDependencies();
-            }
-            catch (Exception ex)
-            {
-                GamepadSupportPlugin.Logger.Log(LogLevel.Message | LogLevel.Error, "GamepadSupport plugin failed to load: " + ex.Message);
-                enabled = false;
-                return;
-            }
-
             _currentState = _previousState = GamePad.GetState(PlayerIndex.One, GamePadDeadZone.IndependentAxes);
             Hooks.InitHooks();
         }

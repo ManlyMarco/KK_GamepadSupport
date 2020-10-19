@@ -78,10 +78,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependencyLoader.cs" />
     <Compile Include="GamepadSupportPlugin.cs" />
     <Compile Include="Gamepad\CursorEmulator.cs" />
     <Compile Include="Gamepad\GamepadWhisperer.cs" />
-    <Compile Include="Gamepad\GamepadWhisperer.DependencyLoader.cs" />
     <Compile Include="Gamepad\Hooks.ADV.cs" />
     <Compile Include="Gamepad\Hooks.Camera.cs" />
     <Compile Include="Gamepad\Hooks.Canvas.cs" />
