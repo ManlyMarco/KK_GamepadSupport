@@ -13,7 +13,7 @@ namespace KK_GamepadSupport
     [BepInPlugin(Guid, Guid, Version)]
     public sealed class GamepadSupportPlugin : BaseUnityPlugin
     {
-        public const string Version = "2.0.1";
+        public const string Version = "2.0.2";
         public const string Guid = "GamepadSupport";
 
         internal static new ManualLogSource Logger;
