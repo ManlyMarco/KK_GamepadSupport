@@ -5,6 +5,18 @@ else {
     $dir = $PSScriptRoot + "\bin\"
 }
 
-$ver = "v" + (Get-ChildItem -Path ($dir + "\BepInEx\") -Filter "KK_GamepadSupport.dll" -Recurse -Force)[0].VersionInfo.FileVersion.ToString()
+$copy = $dir + "\copy\BepInEx\plugins\GamepadSupport" 
 
-Compress-Archive -Path ($dir + "\BepInEx\") -Force -CompressionLevel "Optimal" -DestinationPath ($dir + "KK_GamepadSupport_" + $ver + ".zip")
+foreach ($prefix in 'KK', 'KKS') 
+{
+    $ver = "v" + (Get-ChildItem -Path ($dir + "\"+$prefix+"\") -Filter ($prefix + "_GamepadSupport.dll") -Recurse -Force)[0].VersionInfo.FileVersion.ToString() -replace "^([\d+\.]+?\d+)[\.0]*$", '${1}'
+
+    Remove-Item -Force -Path ($dir + "\copy") -Recurse -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $copy
+
+    Copy-Item -Path ($dir + "\"+$prefix+"\*") -Destination $copy -Recurse -Force
+
+    Compress-Archive -Path ($dir + "\copy\BepInEx") -Force -CompressionLevel "Optimal" -DestinationPath ($dir + $prefix+"_GamepadSupport_" + $ver + ".zip")
+}
+
+Remove-Item -Force -Path ($dir + "\copy") -Recurse -ErrorAction SilentlyContinue
