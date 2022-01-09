@@ -9,8 +9,10 @@ using KKAPI;
 namespace KK_GamepadSupport
 {
     [BepInProcess(KoikatuAPI.GameProcessName)]
-    //[BepInProcess(KoikatuAPI.GameProcessNameSteam)]
-    [BepInDependency(KKAPI.KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
+#if KK
+    [BepInProcess(KoikatuAPI.GameProcessNameSteam)]
+#endif
+    [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
     [BepInPlugin(Guid, Guid, Version)]
     public sealed class GamepadSupportPlugin : BaseUnityPlugin
     {

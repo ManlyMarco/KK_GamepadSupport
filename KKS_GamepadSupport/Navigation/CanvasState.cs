@@ -15,8 +15,7 @@ namespace KK_GamepadSupport.Navigation
 
         private bool? _lastEnabledVal;
         private readonly bool _isFullScreen;
-
-        private Func<bool> isEnabled;
+        private readonly Func<bool> _isEnabled;
 
         public CanvasState(Canvas canvas)
         {
@@ -25,16 +24,18 @@ namespace KK_GamepadSupport.Navigation
             Canvas = canvas;
             Raycaster = canvas.GetComponent<GraphicRaycaster>();
 
+#if KKS
             var fc = canvas.GetComponentInParent<FadeCanvas>();
             if (fc != null)
             {
-                isEnabled = () => fc.isFading;
+                _isEnabled = () => fc.isFading;
             }
             else
+#endif
             {
                 var cg = canvas.GetComponentInParent<CanvasGroup>();
                 if (cg != null)
-                    isEnabled = () => cg.alpha > 0.5f;
+                    _isEnabled = () => cg.alpha > 0.5f;
             }
 
             // Force an update at start
@@ -60,7 +61,7 @@ namespace KK_GamepadSupport.Navigation
 
         public int RenderOrder => Canvas.renderOrder;
         public int SortOrder => Canvas.sortingOrder;
-        public bool Enabled => Raycaster.enabled && Canvas.isActiveAndEnabled && (isEnabled == null || isEnabled());
+        public bool Enabled => Raycaster.enabled && Canvas.isActiveAndEnabled && (_isEnabled == null || _isEnabled());
 
         public IEnumerable<Selectable> GetSelectables(bool includeInactive)
         {

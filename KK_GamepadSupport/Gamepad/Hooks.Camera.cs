@@ -76,7 +76,7 @@ namespace KK_GamepadSupport.Gamepad
             #region H camera
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(BaseCameraControl_Ver2), "InputKeyProc")]
+            [HarmonyPatch(typeof(BaseCameraControl_Ver2), nameof(BaseCameraControl_Ver2.InputKeyProc))]
             public static void InputKeyProcPost(BaseCameraControl_Ver2 __instance, ref bool __result)
             {
                 if (_disabled) return;
@@ -84,9 +84,6 @@ namespace KK_GamepadSupport.Gamepad
                 if (OnProcessCameraControls(__instance))
                     __result = true;
             }
-
-            private static readonly FieldInfo _camDatField = AccessTools.Field(typeof(BaseCameraControl_Ver2), "CamDat");
-            private static readonly FieldInfo _transBaseField = AccessTools.Field(typeof(BaseCameraControl_Ver2), "transBase");
 
             private static bool OnProcessCameraControls(BaseCameraControl_Ver2 cameraControl)
             {
@@ -110,7 +107,7 @@ namespace KK_GamepadSupport.Gamepad
                 var ltPressed = ltVal > 0.3;
                 var rtPressed = rtVal > 0.3;
 
-                var cameraData = (BaseCameraControl_Ver2.CameraData)_camDatField.GetValue(cameraControl);
+                var cameraData = cameraControl.CamDat;
 
                 if (!ltPressed && !rtPressed)
                 {
@@ -128,7 +125,7 @@ namespace KK_GamepadSupport.Gamepad
                 else if (!ltPressed)
                 {
                     var zero = new Vector3(axis * moveSpeed * speedMultiplier, 0, axis2 * moveSpeed * speedMultiplier);
-                    var transBase = (Transform)_transBaseField.GetValue(cameraControl);
+                    var transBase = cameraControl.transBase;
                     if (transBase != null)
                         cameraData.Pos = cameraData.Pos + transBase.InverseTransformDirection(cameraControl.transform.TransformDirection(zero));
                     else
@@ -139,7 +136,7 @@ namespace KK_GamepadSupport.Gamepad
                     return false;
                 }
 
-                _camDatField.SetValue(cameraControl, cameraData);
+                cameraControl.CamDat = cameraData;
 
                 return true;
             }

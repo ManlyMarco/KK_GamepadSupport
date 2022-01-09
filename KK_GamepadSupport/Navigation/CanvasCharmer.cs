@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using BepInEx.Logging;
+using KKAPI;
+using KKAPI.MainGame;
 using Manager;
 using StrayTech;
 using UnityEngine;
@@ -16,6 +18,7 @@ namespace KK_GamepadSupport.Navigation
         private const float CursorPokeStart = 4f;
 
         private float _timeSinceLastAction;
+        private bool _playerTouchedMe;
 
         private static EventSystem CurrentEventSystem => EventSystem.current;
 
@@ -35,7 +38,9 @@ namespace KK_GamepadSupport.Navigation
 
         private void Start()
         {
+#if DEBUG
             CanvasManager.UpdateCanvases();
+#endif
 
             SceneManager.sceneLoaded += SceneManagerOnSceneLoaded;
             SceneManager.sceneUnloaded += SceneManagerOnSceneUnloaded;
@@ -77,14 +82,37 @@ namespace KK_GamepadSupport.Navigation
                 return;
             }
 
+            if (CanvasManager.NeedsCanvasesRefresh && _playerTouchedMe)
+            {
+                CanvasManager.UpdateCanvases();
+                if (selected != null)
+                {
+                    var selectable = selected.GetComponent<Selectable>();
+                    if (selectable != null && (!selectable.isActiveAndEnabled || selectable.navigation.mode == UnityEngine.UI.Navigation.Mode.None))
+                        CanvasManager.SelectFirstControl();
+                }
+                return;
+            }
+
             var input = CurrentEventSystem.currentInputModule.input;
             if (Mathf.Abs(input.GetAxisRaw("Horizontal")) > 0.01f || Mathf.Abs(input.GetAxisRaw("Vertical")) > 0.01f || input.GetButtonDown("Submit"))
             {
+                if (!_playerTouchedMe)
+                {
+                    _playerTouchedMe = true;
+                    CanvasManager.NeedsCanvasesRefresh = true;
+                }
+
                 // Do not show the cursor or select anything if we are currently editing a text field
                 if (selected != null && selected.GetComponent<InputField>()?.isFocused == true)
                     return;
 
                 _timeSinceLastAction = 0f;
+            }
+            else if (!_playerTouchedMe)
+            {
+                // Do as little as possible until player actually starts trying to navigate with arrow keys / gamepad
+                return;
             }
             else
             {
@@ -131,12 +159,13 @@ namespace KK_GamepadSupport.Navigation
                 }
                 else
                 {
-                    if (!selectable.isActiveAndEnabled)
+                    if (!selectable.isActiveAndEnabled || selectable.navigation.mode == UnityEngine.UI.Navigation.Mode.None)
                     {
                         if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.Log(LogLevel.Message, "object not isActiveAndEnabled");
                         // Needed for some transitions, e.g. live mode
-                        CanvasManager.UpdateCanvases();
-                        CanvasManager.SelectFirstControl();
+                        CanvasManager.NeedsCanvasesRefresh = true;
+                        //CanvasManager.UpdateCanvases();
+                        //CanvasManager.SelectFirstControl();
                     }
                 }
             }
@@ -144,16 +173,24 @@ namespace KK_GamepadSupport.Navigation
 
         private static bool ShouldDisableNavigation()
         {
-            if (Singleton<Game>.IsInstance())
+#if KK
+            if (Game.IsInstance())
             {
-                var gameInstance = Singleton<Game>.Instance;
-                var actScene = gameInstance.actScene;
+                var actScene = Game.instance.actScene;
                 if (actScene != null && actScene.Player != null)
                 {
-                    var disableCanvasInteractions = actScene.isCursorLock && !actScene.Player.move.isReglateMove && !gameInstance.IsRegulate(true);
+                    var disableCanvasInteractions = actScene.isCursorLock && !actScene.Player.move.isReglateMove && !Game.Instance.IsRegulate(true);
                     return disableCanvasInteractions;
                 }
             }
+#else
+            var actScene = GameAPI.GetActionControl()?.actionScene;
+            if (actScene != null && actScene.Player != null)
+            {
+                var disableCanvasInteractions = actScene.isCursorLock && !actScene.Player.move.isReglateMove && !Game.IsRegulate(true);
+                return disableCanvasInteractions;
+            }
+#endif
             return false;
         }
 
@@ -175,30 +212,38 @@ namespace KK_GamepadSupport.Navigation
             if (isTalk)
             {
                 yield return new WaitWhile(() =>
-                    Game.Instance.actScene == null ||
-                    Game.Instance.actScene.AdvScene == null ||
-                    Game.Instance.actScene.AdvScene.transform.Find("Canvas_Main") == null);
+                {
+                    var advScene = GameAPI.GetADVScene();
+                    return advScene == null || advScene.transform.Find("Canvas_Main") == null;
+                });
             }
 
-            CanvasManager.UpdateCanvases();
-            CanvasManager.SelectFirstControl();
+            CanvasManager.NeedsCanvasesRefresh = true;
         }
 
         private static bool SceneIsLoading()
         {
-            if (Manager.Scene.Instance.IsNowLoadingFade)
+            if (SceneApi.GetIsNowLoadingFade())
                 return true;
 
+#if KK
             if (Communication.IsInstance())
             {
                 if (!Communication.Instance.isInit)
                     return true;
             }
-
+#else
+            if (GameAssist.IsInstance())
+            {
+                if (!GameAssist.Instance.isInit)
+                    return true;
+            }
+#endif
             return false;
         }
 
         private GUIStyle _canvasBoxStyle;
+
         private void DrawCanvasList(GameObject currentSelectedGameObject)
         {
             if (_canvasBoxStyle == null)

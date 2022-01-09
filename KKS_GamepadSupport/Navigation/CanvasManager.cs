@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Logging;
 using KKAPI;
 using KKAPI.MainGame;
-using Manager;
 using StrayTech;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,13 +13,18 @@ namespace KK_GamepadSupport.Navigation
     public class CanvasManager
     {
         // Prefer to select controls from these canvases when looking for controls to select
-        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> { "CvsMainMenu", "ActionMenuCanvas", "Canvas_Main", "ExitDialog(Clone), ConfirmDialog(Clone)" };
+        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> {
+            "CvsMainMenu", "ActionMenuCanvas", "Canvas_Main", 
+ #if KKS
+            "ExitDialog(Clone), ConfirmDialog(Clone)"
+ #endif
+        };
 
         private readonly List<CanvasState> _canvases = new List<CanvasState>();
 
         private static EventSystem CurrentEventSystem => EventSystem.current;
 
-        public bool NeedsCanvasesRefresh = false;
+        public bool NeedsCanvasesRefresh;
 
         /// <summary>
         /// Get all components selectable by keyboard/gamepad input, in the order of input capure importance

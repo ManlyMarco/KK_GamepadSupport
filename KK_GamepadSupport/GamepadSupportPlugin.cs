@@ -4,12 +4,15 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using KK_GamepadSupport.Gamepad;
 using KK_GamepadSupport.Navigation;
+using KKAPI;
 
 namespace KK_GamepadSupport
 {
-    [BepInProcess("Koikatu")]
-    [BepInProcess("Koikatsu Party")]
-    [BepInDependency(KKAPI.KoikatuAPI.GUID, "1.12")]
+    [BepInProcess(KoikatuAPI.GameProcessName)]
+#if KK
+    [BepInProcess(KoikatuAPI.GameProcessNameSteam)]
+#endif
+    [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
     [BepInPlugin(Guid, Guid, Version)]
     public sealed class GamepadSupportPlugin : BaseUnityPlugin
     {

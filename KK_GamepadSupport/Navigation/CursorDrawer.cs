@@ -1,4 +1,5 @@
-﻿using KKAPI.Utilities;
+﻿using KKAPI;
+using KKAPI.Utilities;
 using UnityEngine;
 
 namespace KK_GamepadSupport.Navigation
@@ -9,9 +10,7 @@ namespace KK_GamepadSupport.Navigation
 
         public void LoadTexture()
         {
-            _pointer = new Texture2D(1, 1, TextureFormat.ARGB32, false, false);
-            var bytes = ResourceUtils.GetEmbeddedResource("pointer.png", typeof(CursorDrawer).Assembly);
-            _pointer.LoadImage(bytes);
+            _pointer = ResourceUtils.GetEmbeddedResource("pointer.png", typeof(CursorDrawer).Assembly).LoadTexture();
 
             const int idealResolutionH = 1800;
 
@@ -26,7 +25,7 @@ namespace KK_GamepadSupport.Navigation
         public void Draw(GameObject currentSelectedGameObject, bool poke)
         {
             if (currentSelectedGameObject == null) return;
-            if (Manager.Scene.Instance.IsNowLoadingFade) return;
+            if (SceneApi.GetIsNowLoadingFade()) return;
 
             var camera = Camera.current;
             if (camera == null) camera = Camera.main;

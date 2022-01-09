@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 using ActionGame;
 using ActionGame.Chara.Mover;
-using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 
@@ -22,32 +20,34 @@ namespace KK_GamepadSupport.Gamepad
             #region Walking
 
             [HarmonyTranspiler]
-            [HarmonyPatch(typeof(Main), "Update")]
-            public static IEnumerable<CodeInstruction> MainUpdateTpl(IEnumerable<CodeInstruction> instructions)
+            [HarmonyPatch(typeof(Main), nameof(Main.Update))]
+            public static IEnumerable<CodeInstruction> MainUpdateTpl(IEnumerable<CodeInstruction> instructions, ILGenerator ilGenerator)
             {
-                var newMethod = AccessTools.Method(typeof(MainGameMap), nameof(GetMovementAngle));
+                var lab = ilGenerator.DefineLabel();
 
-                var list = instructions.ToList();
-                var i = list.FindIndex(instruction => instruction.opcode == OpCodes.Initobj);
+                var m = new CodeMatcher(instructions)
+                    .MatchForward(false,
+                        new CodeMatch(OpCodes.Ldloca_S),
+                        new CodeMatch(OpCodes.Initobj, typeof(float?)));
+                var ins = m.Instruction;
 
-                if (i > 0 && list[i - 1].opcode == OpCodes.Ldloca_S && list[i + 1].opcode == OpCodes.Ldloc_3)
-                {
-                    list[i - 1].opcode = OpCodes.Nop;
-                    list[i - 1].operand = null;
-                    list[i].opcode = OpCodes.Call;
-                    list[i].operand = newMethod;
-                    list[i + 1].opcode = OpCodes.Nop;
-                }
-                else
-                {
-                    Logger.Log(LogLevel.Error,
-                        "Failed to patch, could not find transplier target\n" + new StackTrace());
-                }
-
-                return list;
+                // 0 is used normally since this is an angle value, so can't be used as special value
+                return m.InsertAndAdvance(
+                        new CodeInstruction(ins),
+                            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MainGameMap), nameof(GetMovementAngle))),
+                            new CodeInstruction(OpCodes.Call, AccessTools.Constructor(typeof(float?), new[] { typeof(float) })),
+                            new CodeInstruction(ins),
+                            new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(float?), nameof(Nullable<float>.Value))),
+                            new CodeInstruction(OpCodes.Ldc_R4, float.MaxValue),
+                            new CodeInstruction(OpCodes.Ceq),
+                            new CodeInstruction(OpCodes.Brfalse, lab)
+                            )
+                        .Advance(2)
+                        .AddLabels(new[] { lab })
+                        .Instructions();
             }
 
-            public static float? GetMovementAngle()
+            public static float GetMovementAngle()
             {
                 if (GamepadWhisperer.CurrentState.IsConnected)
                 {
@@ -58,8 +58,7 @@ namespace KK_GamepadSupport.Gamepad
                         return stickPosition.x >= 0 ? absAngle : -absAngle;
                     }
                 }
-
-                return null;
+                return float.MaxValue;
             }
 
             [HarmonyPrefix]

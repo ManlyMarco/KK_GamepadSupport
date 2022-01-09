@@ -1,8 +1,6 @@
 ﻿using System.Linq;
-using HarmonyLib;
 using Illusion.Component.UI;
 using UGUI_AssistLibrary;
-using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,7 +15,7 @@ namespace KK_GamepadSupport.Navigation
             var trigger = GetComponent<ObservablePointerEnterTrigger>();
             if (trigger != null)
             {
-                var subject = Traverse.Create(trigger).Field("onPointerEnter").GetValue<Subject<PointerEventData>>();
+                var subject = trigger.onPointerEnter;
                 subject.OnNext(null);
             }
             else
@@ -31,7 +29,7 @@ namespace KK_GamepadSupport.Navigation
             var trigger = GetComponent<ObservablePointerExitTrigger>();
             if (trigger != null)
             {
-                var subject = Traverse.Create(trigger).Field("onPointerExit").GetValue<Subject<PointerEventData>>();
+                var subject = trigger.onPointerExit;
                 subject.OnNext(null);
             }
             else

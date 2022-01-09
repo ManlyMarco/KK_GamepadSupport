@@ -173,12 +173,24 @@ namespace KK_GamepadSupport.Navigation
 
         private static bool ShouldDisableNavigation()
         {
+#if KK
+            if (Game.IsInstance())
+            {
+                var actScene = Game.instance.actScene;
+                if (actScene != null && actScene.Player != null)
+                {
+                    var disableCanvasInteractions = actScene.isCursorLock && !actScene.Player.move.isReglateMove && !Game.Instance.IsRegulate(true);
+                    return disableCanvasInteractions;
+                }
+            }
+#else
             var actScene = GameAPI.GetActionControl()?.actionScene;
             if (actScene != null && actScene.Player != null)
             {
                 var disableCanvasInteractions = actScene.isCursorLock && !actScene.Player.move.isReglateMove && !Game.IsRegulate(true);
                 return disableCanvasInteractions;
             }
+#endif
             return false;
         }
 
@@ -214,12 +226,19 @@ namespace KK_GamepadSupport.Navigation
             if (SceneApi.GetIsNowLoadingFade())
                 return true;
 
+#if KK
+            if (Communication.IsInstance())
+            {
+                if (!Communication.Instance.isInit)
+                    return true;
+            }
+#else
             if (GameAssist.IsInstance())
             {
                 if (!GameAssist.Instance.isInit)
                     return true;
             }
-
+#endif
             return false;
         }
 

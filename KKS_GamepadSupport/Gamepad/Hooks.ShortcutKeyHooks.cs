@@ -17,7 +17,11 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             [HarmonyPrefix]
+#if KK
+            [HarmonyPatch(typeof(ShortcutKey), nameof(ShortcutKey.Update))]
+#elif KKS
             [HarmonyPatch(typeof(ShortcutKey), nameof(ShortcutKey.LateUpdate))]
+#endif
             public static bool UpdateHook(ShortcutKey __instance)
             {
                 if (_disabled) return true;

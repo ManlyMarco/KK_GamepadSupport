@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using ADV;
+using ChaCustom;
 using HarmonyLib;
 using SceneAssist;
+using StrayTech;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -80,7 +82,7 @@ namespace KK_GamepadSupport.Navigation
                     return type == null ? null : AccessTools.Method(type, name, parameters, generics);
                 }
 
-                var hi = Harmony.CreateAndPatchAll(typeof(Hooks), GamepadSupportPlugin.Guid + ".CanvasCharmer");
+                _hi = Harmony.CreateAndPatchAll(typeof(Hooks), GamepadSupportPlugin.Guid + ".CanvasCharmer");
 
                 // Fix keyboard navigation not working in chara/map lists
                 var handlerPost = AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPost));
@@ -99,7 +101,7 @@ namespace KK_GamepadSupport.Navigation
                 })
                 {
                     if (methodInfo != null)
-                        hi.Patch(methodInfo, null, new HarmonyMethod(handlerPost));
+                        _hi.Patch(original: methodInfo, postfix: new HarmonyMethod(handlerPost));
                 }
 
                 // KKP specific, has a MonoB argument instead of GameObj like others
@@ -108,7 +110,7 @@ namespace KK_GamepadSupport.Navigation
                 {
                     var kkpList = AccessTools.Method(listType, "SetToggleHandler");
                     if (kkpList != null)
-                        hi.Patch(kkpList, null, new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
+                        _hi.Patch(kkpList, postfix: new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
                 }
 
                 // Fix keyboard navigation not working in HSprite / h scene
@@ -118,17 +120,22 @@ namespace KK_GamepadSupport.Navigation
                 {
                     foreach (var m in hspriteTargets.Where(x => x.Name == mName))
                     {
-                        hi.Patch(m, null, null, new HarmonyMethod(mouseKillerTpl));
+                        _hi.Patch(original: m, transpiler: new HarmonyMethod(mouseKillerTpl));
                     }
                 }
             }
 
+            private static Harmony _hi;
             private static bool _disabled;
             public static void RemoveHooks()
             {
+                if (_disabled) return;
+
                 foreach (var fix in FindObjectsOfType<PointerActionKeyboardFix>().Cast<Object>().Concat(FindObjectsOfType<CharaListKeyboardFix>()))
                     Destroy(fix);
 
+                _hi.UnpatchSelf();
+                _hi = null;
                 _disabled = true;
             }
 
@@ -141,14 +148,26 @@ namespace KK_GamepadSupport.Navigation
             {
                 if (_disabled) return;
 
-                _instance.CanvasManager.UpdateCanvases();
+                _instance.CanvasManager.NeedsCanvasesRefresh = true;
+            }
+
+            /// <summary>
+            /// Fix opening yes/no windows in maker not updating navigation
+            /// </summary>
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(CustomCheckWindow), nameof(CustomCheckWindow.Setup))]
+            public static void CustomCheckWindow_Setup_Post()
+            {
+                if (_disabled) return;
+
+                _instance.CanvasManager.NeedsCanvasesRefresh = true;
             }
 
             /// <summary>
             /// Fix pressing A not working on some UI items
             /// </summary>
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(HSprite), "LoadMotionList")]
+            [HarmonyPatch(typeof(HSprite), nameof(HSprite.LoadMotionList))]
             public static void FixPointerAction()
             {
                 if (_disabled) return;
@@ -159,11 +178,25 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(CanvasGroup), nameof(CanvasGroup.alpha), MethodType.Setter)]
+            public static void CanvasGroupAlphaChanged(CanvasGroup __instance, float value)
+            {
+                if (_disabled) return;
+
+                if (value > 0.99f && __instance.alpha <= 0.99f || value < 0.01f && __instance.alpha >= 0.01f)
+                {
+                    if (GamepadSupportPlugin.CanvasDebug.Value) GamepadSupportPlugin.Logger.LogDebug(
+                        $"CanvasGroupAlphaChanged triggered for value={value} oldValue={__instance.alpha} name={__instance.FullPath()}");
+                    _instance.CanvasManager.NeedsCanvasesRefresh = true;
+                }
+            }
+
             /// <summary>
             /// Disable arrow keys moving the camera (now they navigate the UI)
             /// </summary>
             [HarmonyTranspiler]
-            [HarmonyPatch(typeof(BaseCameraControl_Ver2), "InputKeyProc")]
+            [HarmonyPatch(typeof(BaseCameraControl_Ver2), nameof(BaseCameraControl_Ver2.InputKeyProc))]
             public static IEnumerable<CodeInstruction> CameraControlDisableArrows(IEnumerable<CodeInstruction> instructions)
             {
                 var keys = new[] { KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow };
@@ -183,7 +216,7 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
-            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions)
+            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
             {
                 foreach (var instruction in instructions)
                 {
@@ -193,6 +226,7 @@ namespace KK_GamepadSupport.Navigation
                         yield return new CodeInstruction(OpCodes.Pop);
                         // Push true
                         yield return new CodeInstruction(OpCodes.Ldc_I4_1);
+                        //Console.WriteLine(__originalMethod.Name);
                     }
                     else
                     {

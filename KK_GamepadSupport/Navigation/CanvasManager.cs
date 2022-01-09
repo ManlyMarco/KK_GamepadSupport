@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx.Logging;
-using Manager;
+using KKAPI;
+using KKAPI.MainGame;
 using StrayTech;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,11 +13,18 @@ namespace KK_GamepadSupport.Navigation
     public class CanvasManager
     {
         // Prefer to select controls from these canvases when looking for controls to select
-        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> { "CvsMainMenu", "ActionMenuCanvas", "Canvas_Main" };
+        private static readonly HashSet<string> _preferredCanvasNames = new HashSet<string> {
+            "CvsMainMenu", "ActionMenuCanvas", "Canvas_Main", 
+ #if KKS
+            "ExitDialog(Clone), ConfirmDialog(Clone)"
+ #endif
+        };
 
         private readonly List<CanvasState> _canvases = new List<CanvasState>();
 
         private static EventSystem CurrentEventSystem => EventSystem.current;
+
+        public bool NeedsCanvasesRefresh;
 
         /// <summary>
         /// Get all components selectable by keyboard/gamepad input, in the order of input capure importance
@@ -42,7 +49,7 @@ namespace KK_GamepadSupport.Navigation
                 if (shouldRemove) x.Dispose();
                 return shouldRemove;
             });
-            var ordered = _canvases.OrderByDescending(x => x.Canvas.isActiveAndEnabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
+            var ordered = _canvases.OrderByDescending(x => x.Enabled).ThenByDescending(x => x.SortOrder).ThenByDescending(x => x.RenderOrder);
             return topOnly ? ordered.Take(1) : ordered;
         }
 
@@ -87,7 +94,7 @@ namespace KK_GamepadSupport.Navigation
                 .Where(x => x.Canvas.name != "ActionCycleCanvas") // If this canvas gets selected first, there's danger of accidentally pressing A and advancing to next period
                 .SelectMany(c => c.GetSelectables(false));
 
-            var toSelect = cmps.FirstOrDefault(x => x.isActiveAndEnabled);
+            var toSelect = cmps.FirstOrDefault(x => x.isActiveAndEnabled && x.navigation.mode != UnityEngine.UI.Navigation.Mode.None);
             if (toSelect != null)
             {
                 //Logger.Log(LogLevel.Info, "select " + toSelect.transform.FullPath());
@@ -129,8 +136,9 @@ namespace KK_GamepadSupport.Navigation
             ClearCanvasStates();
 
             var canvases = Object.FindObjectsOfType<Canvas>().AsEnumerable();
-            if (Game.IsInstance() && Game.Instance.actScene != null && Game.Instance.actScene.AdvScene != null)
-                canvases = canvases.Union(Game.Instance.actScene.AdvScene.GetComponentsInChildren<Canvas>(true)); // Also finds disabled canvases, necessary in some cases
+            var advScene = GameAPI.GetADVScene();
+            if (advScene != null)
+                canvases = canvases.Union(advScene.GetComponentsInChildren<Canvas>(true)); // Also finds disabled canvases, necessary in some cases
             foreach (var canvase in canvases)
             {
                 var cs = new CanvasState(canvase);
@@ -145,14 +153,19 @@ namespace KK_GamepadSupport.Navigation
                     cs.Dispose();
                 }
             }
+
+            if (GamepadSupportPlugin.CanvasDebug.Value)
+                GamepadSupportPlugin.Logger.LogInfo($"UpdateCanvases finished with {_canvases.Count} canvases found");
+
+            NeedsCanvasesRefresh = false;
         }
 
         private static IEnumerator ChangeCanvasRenderModeCo(Canvas target)
         {
             // Need to wait until after loading to avoid the canvas becoming visible mid-loading
-            yield return new WaitWhile(() => Scene.Instance.IsNowLoadingFade);
+            yield return new WaitWhile(SceneApi.GetIsNowLoadingFade);
 
-            GamepadSupportPlugin.Logger.Log(LogLevel.Info, $"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
+            GamepadSupportPlugin.Logger.LogWarning($"Canvas {target.transform.FullPath()} has overlay mode {target.renderMode}, changing to ScreenSpaceOverlay");
             target.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 

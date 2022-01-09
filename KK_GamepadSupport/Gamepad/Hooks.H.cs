@@ -13,7 +13,7 @@ namespace KK_GamepadSupport.Gamepad
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(HSprite), "Update")]
+            [HarmonyPatch(typeof(HSprite), nameof(HSprite.Update))]
             public static void HSpriteUpdateHook(HSprite __instance)
             {
                 if (_disabled) return;

@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection.Emit;
 using ActionGame;
 using ActionGame.Chara.Mover;
-using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
-using XInputDotNetPure;
 
 namespace KK_GamepadSupport.Gamepad
 {
