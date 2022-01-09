@@ -134,25 +134,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyLoader.cs" />
-    <Compile Include="GamepadSupportPlugin.cs" />
-    <Compile Include="Gamepad\CursorEmulator.cs" />
-    <Compile Include="Gamepad\GamepadWhisperer.cs" />
-    <Compile Include="Gamepad\Hooks.ADV.cs" />
-    <Compile Include="Gamepad\Hooks.Camera.cs" />
-    <Compile Include="Gamepad\Hooks.Canvas.cs" />
-    <Compile Include="Gamepad\Hooks.cs" />
-    <Compile Include="Gamepad\Hooks.H.cs" />
-    <Compile Include="Gamepad\Hooks.MainGameMap.cs" />
-    <Compile Include="Gamepad\Hooks.ShortcutKeyHooks.cs" />
-    <Compile Include="Navigation\CanvasCharmer.cs" />
     <Compile Include="Navigation\CanvasCharmer.Hooks.cs" />
-    <Compile Include="Navigation\CanvasManager.cs" />
-    <Compile Include="Navigation\CanvasState.cs" />
-    <Compile Include="Navigation\CharaListKeyboardFix.cs" />
-    <Compile Include="Navigation\CursorDrawer.cs" />
-    <Compile Include="Navigation\PointerActionKeyboardFix.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\XInputDotNet-x64-v2017.04-2\XInputInterface.lib">
@@ -176,8 +158,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\pointer.png" />
+    <Folder Include="Properties\" />
   </ItemGroup>
+  <Import Project="..\Core_GamepadSupport\Core_GamepadSupport.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\IllusionLibs.BepInEx.Harmony.2.5.4\build\IllusionLibs.BepInEx.Harmony.targets" Condition="Exists('..\packages\IllusionLibs.BepInEx.Harmony.2.5.4\build\IllusionLibs.BepInEx.Harmony.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

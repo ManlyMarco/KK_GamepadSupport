@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>fdbb965b-7a36-4e70-83d2-90c61797ce63</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Core_GamepadSupport</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DependencyLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GamepadSupportPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\CursorEmulator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\GamepadWhisperer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.ADV.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.Canvas.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.H.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.MainGameMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gamepad\Hooks.ShortcutKeyHooks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CanvasCharmer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CanvasManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CanvasState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CharaListKeyboardFix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\CursorDrawer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigation\PointerActionKeyboardFix.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\pointer.png" />
+  </ItemGroup>
+</Project>
