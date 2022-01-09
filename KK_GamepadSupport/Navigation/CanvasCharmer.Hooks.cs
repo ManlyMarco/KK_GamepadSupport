@@ -18,7 +18,7 @@ namespace KK_GamepadSupport.Navigation
     {
         private static class Hooks
         {
-            private static readonly string[] _hSpriteKillList = new[]{
+            private static readonly HashSet<string> _hSpriteKillList = new HashSet<string> {
                 "OnActionHoushiMenuBreast",
                 "OnActionHoushiMenuHand",
                 "OnActionHoushiMenuMouth",
@@ -116,13 +116,8 @@ namespace KK_GamepadSupport.Navigation
                 // Fix keyboard navigation not working in HSprite / h scene
                 var hspriteTargets = AccessTools.GetDeclaredMethods(typeof(HSprite));
                 var mouseKillerTpl = AccessTools.Method(typeof(Hooks), nameof(MouseCheckKillerTpl));
-                foreach (var mName in _hSpriteKillList)
-                {
-                    foreach (var m in hspriteTargets.Where(x => x.Name == mName))
-                    {
-                        _hi.Patch(original: m, transpiler: new HarmonyMethod(mouseKillerTpl));
-                    }
-                }
+                foreach (var m in hspriteTargets.Where(x => _hSpriteKillList.Contains(x.Name)))
+                    _hi.Patch(original: m, transpiler: new HarmonyMethod(mouseKillerTpl));
             }
 
             private static Harmony _hi;
@@ -216,7 +211,7 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
-            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
+            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions)//, MethodBase __originalMethod)
             {
                 foreach (var instruction in instructions)
                 {

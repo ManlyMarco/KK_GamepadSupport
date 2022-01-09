@@ -20,7 +20,7 @@ namespace KK_GamepadSupport.Navigation
     {
         private static class Hooks
         {
-            private static readonly string[] _hSpriteKillList = new[]{
+            private static readonly HashSet<string> _hSpriteKillList = new HashSet<string> {
                 "OnActionHoushiMenuBreast",
                 "OnActionHoushiMenuHand",
                 "OnActionHoushiMenuMouth",
@@ -83,55 +83,18 @@ namespace KK_GamepadSupport.Navigation
                 "OnSubMenu",
                 "OnSubMenuMale",
                 "OnSubMenuMultiMale",
-                "OnVomitClick"};
+                "OnVomitClick"
+            };
 
             public static void InitHooks()
             {
-                MethodInfo TryMethod(Type type, string name, Type[] parameters = null, Type[] generics = null)
-                {
-                    return type == null ? null : AccessTools.Method(type, name, parameters, generics);
-                }
-
                 _hi = Harmony.CreateAndPatchAll(typeof(Hooks), GamepadSupportPlugin.Guid + ".CanvasCharmer");
-
-                // Fix keyboard navigation not working in chara/map lists
-                var handlerPost = AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPost));
-                foreach (var methodInfo in new[]
-                {
-                    TryMethod(typeof(CustomSelectListCtrl), nameof(CustomSelectListCtrl.SetToggleHandler)),
-                    TryMethod(typeof(ExternalFileListCtrl), nameof(ExternalFileListCtrl.SetToggleHandler)),
-                    TryMethod(typeof(EmblemSelectListCtrl), nameof(EmblemSelectListCtrl.SetToggleHandler)),
-
-                    TryMethod(typeof(UGUI_AssistLibrary.UIAL_ListCtrl), nameof(UGUI_AssistLibrary.UIAL_ListCtrl.SetToggleHandler)),
-                })
-                {
-                    if (methodInfo != null)
-                        _hi.Patch(original: methodInfo, postfix: new HarmonyMethod(handlerPost));
-                }
-
-                // KKP specific, has a MonoB argument instead of GameObj like others
-                // var listType = typeof(ThreadFileListCtrl<CustomFileInfo, CustomFileInfoComponent>);
-                //Type.GetType("FileListUI.ThreadFileListCtrl`2[[ChaCustom.CustomFileInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[ChaCustom.CustomFileInfoComponent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
-                //if (listType != null)
-                {
-                    //var kkpList = AccessTools.Method(listType, "SetToggleHandler");
-                    //if (kkpList != null)
-                    _hi.Patch(
-                        original: AccessTools.Method(typeof(ThreadFileListCtrl<CustomFileInfo, CustomFileInfoComponent>), nameof(ThreadFileListCtrl<CustomFileInfo, CustomFileInfoComponent>.SetToggleHandler)),
-                        postfix: new HarmonyMethod(AccessTools.Method(typeof(Hooks), nameof(SetToggleHandlerPostForParty))));
-                }
 
                 // Fix keyboard navigation not working in HSprite / h scene
                 var hspriteTargets = AccessTools.GetDeclaredMethods(typeof(HSprite));
                 var mouseKillerTpl = AccessTools.Method(typeof(Hooks), nameof(MouseCheckKillerTpl));
-
-                foreach (var mName in _hSpriteKillList)
-                {
-                    foreach (var m in hspriteTargets.Where(x => x.Name == mName))
-                    {
-                        _hi.Patch(original: m, transpiler: new HarmonyMethod(mouseKillerTpl));
-                    }
-                }
+                foreach (var m in hspriteTargets.Where(x => _hSpriteKillList.Contains(x.Name)))
+                    _hi.Patch(original: m, transpiler: new HarmonyMethod(mouseKillerTpl));
             }
 
             private static Harmony _hi;
@@ -225,7 +188,7 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
-            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
+            public static IEnumerable<CodeInstruction> MouseCheckKillerTpl(IEnumerable<CodeInstruction> instructions)//, MethodBase __originalMethod)
             {
                 foreach (var instruction in instructions)
                 {
@@ -244,12 +207,19 @@ namespace KK_GamepadSupport.Navigation
                 }
             }
 
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(CustomSelectListCtrl), nameof(CustomSelectListCtrl.SetToggleHandler))]
+            [HarmonyPatch(typeof(ExternalFileListCtrl), nameof(ExternalFileListCtrl.SetToggleHandler))]
+            [HarmonyPatch(typeof(EmblemSelectListCtrl), nameof(EmblemSelectListCtrl.SetToggleHandler))]
+            [HarmonyPatch(typeof(UGUI_AssistLibrary.UIAL_ListCtrl), nameof(UGUI_AssistLibrary.UIAL_ListCtrl.SetToggleHandler))]
             public static void SetToggleHandlerPost(GameObject obj)
             {
                 obj.GetOrAddComponent<CharaListKeyboardFix>();
             }
 
-            public static void SetToggleHandlerPostForParty(MonoBehaviour fic)
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(ThreadFileListCtrl<CustomFileInfo, CustomFileInfoComponent>), nameof(ThreadFileListCtrl<CustomFileInfo, CustomFileInfoComponent>.SetToggleHandler))]
+            public static void SetToggleHandlerPostMb(MonoBehaviour fic)
             {
                 fic.GetOrAddComponent<CharaListKeyboardFix>();
             }
