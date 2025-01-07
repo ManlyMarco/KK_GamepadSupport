@@ -330,3 +330,7 @@ ASALocalRun/
 .mfractor/
 
 *.zip
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
