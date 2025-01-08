@@ -9,6 +9,7 @@
     <Deterministic>true</Deterministic>
     <OutputPath>..\bin\KKS\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
