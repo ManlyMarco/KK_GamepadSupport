@@ -8,7 +8,11 @@ def get_version():
     try:
         result = subprocess.run(["git", "describe", "--tags", "--abbrev=0"], capture_output=True, text=True, check=True)
         version = result.stdout.strip()
-        return version
+        parts = version.lstrip('v').split('.')
+        while len(parts) < 4:
+            parts.append('0')
+        formatted_version = 'v' + '.'.join(parts)
+        return formatted_version
     except subprocess.CalledProcessError:
         raise RuntimeError("Failed to get the latest tag from the commit history.")
 
