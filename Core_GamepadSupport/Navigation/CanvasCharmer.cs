@@ -67,6 +67,8 @@ namespace KK_GamepadSupport.Navigation
 
             if (GamepadSupportPlugin.CanvasDebug.Value)
                 DrawCanvasList(currentSelectedGameObject);
+
+            CursorDrawer.DrawMousePointer(Input.mousePosition);
         }
 
         private void Update()
