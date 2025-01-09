@@ -3,13 +3,13 @@
 		<!-- This is the master version, only change this one -->
 		<Version>2.1</Version>
 
-		<!--Sets the 'Product name' field on the dll file-->
+		<!-- Sets the 'Product name' field on the dll file -->
 		<Product>GamepadSupport</Product>
-		<!--Sets the 'File description' field on the dll file-->
+		<!-- Sets the 'File description' field on the dll file -->
 		<AssemblyTitle>Support for using gamepads and keyboard to play the game</AssemblyTitle>
-		<!--Sets the 'Company' field on the dll file-->
+		<!-- Sets the 'Company' field on the dll file -->
 		<Authors>https://github.com/ManlyMarco/KK_GamepadSupport</Authors>
-		<!--Sets the 'Copyright' field on the dll file-->
+		<!-- Sets the 'Copyright' field on the dll file -->
 		<Copyright>Copyright ©  2019</Copyright>
 
 		<Deterministic>true</Deterministic>
@@ -29,7 +29,7 @@
 
 		<RemoveDir Directories="$(CopyDir)" />
 		<Copy DestinationFolder="$(CopyDir)\BepInEx\plugins\GamepadSupport" SourceFiles="@(BuildFiles)" />
-		<!--https://learn.microsoft.com/en-us/visualstudio/msbuild/zipdirectory-task?view=vs-2022-->
+		<!-- https://learn.microsoft.com/en-us/visualstudio/msbuild/zipdirectory-task?view=vs-2022 -->
 		<ZipDirectory SourceDirectory="$(CopyDir)" DestinationFile="$(OutputPath)\..\$(AssemblyName)_v$(Version).zip" Overwrite="true" />
 		<RemoveDir Directories="$(CopyDir)" />
 	</Target>
@@ -37,23 +37,18 @@
 	<!-- Allow using of the csproj properties defined above in the code itself -->
 	<Target Name="AddGeneratedConstantsFile" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)GeneratedConstantsFile.cs">
 		<PropertyGroup>
-			<BepInExPluginVersion Condition="'$(BepInExPluginVersion)' == ''">$(Version)</BepInExPluginVersion>
 			<GeneratedText>
-				<![CDATA[
-namespace $(RootNamespace)
-{
-    internal static class Constants
-    {
-        public const string Version = "$(BepInExPluginVersion)"%3B
+				<![CDATA[namespace $(RootNamespace) {
+    internal static class Constants {
+        public const string Version = "$(Version)"%3B
         public const string Name = "$(Product)"%3B
         public const string Description = "$(AssemblyTitle)"%3B
         public const string Website = "$(Authors)"%3B
         public const string Copyright = "$(Copyright)"%3B
     }
-}
-      ]]>
+}]]>
 			</GeneratedText>
-			<GeneratedFilePath>$(IntermediateOutputPath)Constants.cs</GeneratedFilePath>
+			<GeneratedFilePath>$(IntermediateOutputPath)GeneratedConstantsFile.cs</GeneratedFilePath>
 		</PropertyGroup>
 		<ItemGroup>
 			<Compile Include="$(GeneratedFilePath)" />
