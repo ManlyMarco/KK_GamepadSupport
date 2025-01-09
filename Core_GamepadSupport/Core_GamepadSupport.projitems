@@ -9,7 +9,6 @@
     <Import_RootNamespace>Core_GamepadSupport</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DependencyLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamepadSupportPlugin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Gamepad\CursorEmulator.cs" />
