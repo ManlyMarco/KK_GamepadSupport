@@ -10,7 +10,7 @@
 		<!-- Sets the 'Company' field on the dll file -->
 		<Authors>https://github.com/ManlyMarco/KK_GamepadSupport</Authors>
 		<!-- Sets the 'Copyright' field on the dll file -->
-		<Copyright>Copyright ©  2019</Copyright>
+		<Copyright>Copyright © 2019 / GPL-3.0</Copyright>
 
 		<Deterministic>true</Deterministic>
 		<DebugSymbols>true</DebugSymbols>
