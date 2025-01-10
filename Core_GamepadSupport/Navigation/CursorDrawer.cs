@@ -7,10 +7,12 @@ namespace KK_GamepadSupport.Navigation
     public class CursorDrawer
     {
         private Texture2D _pointer;
+        private Texture2D _mousePointer;
 
         public void LoadTexture()
         {
             _pointer = ResourceUtils.GetEmbeddedResource("pointer.png", typeof(CursorDrawer).Assembly).LoadTexture();
+            _mousePointer = ResourceUtils.GetEmbeddedResource("pointer.png", typeof(CursorDrawer).Assembly).LoadTexture();
 
             const int idealResolutionH = 1800;
 
@@ -19,6 +21,9 @@ namespace KK_GamepadSupport.Navigation
                 var scaleFactor = (float)Screen.height / idealResolutionH;
                 TextureScale.Bilinear(_pointer, (int)(_pointer.width * scaleFactor), (int)(_pointer.height * scaleFactor));
                 _pointer.Apply(false);
+
+                TextureScale.Bilinear(_mousePointer, (int)(_mousePointer.width * scaleFactor), (int)(_mousePointer.height * scaleFactor));
+                _mousePointer.Apply(false);
             }
         }
 
@@ -59,6 +64,11 @@ namespace KK_GamepadSupport.Navigation
             }
 
             GUI.Label(new Rect(Mathf.Max(0, pixelPosition.x - _pointer.width) + offset, pixelPosition.y - _pointer.height / 3f, _pointer.width, _pointer.height), _pointer);
+        }
+
+        public void DrawMousePointer(Vector3 mousePosition)
+        {
+            GUI.Label(new Rect(mousePosition.x - _mousePointer.width / 2, Screen.height - mousePosition.y - _mousePointer.height / 2, _mousePointer.width, _mousePointer.height), _mousePointer);
         }
 
         private static Rect RectTransformToScreenSpace(RectTransform transform)

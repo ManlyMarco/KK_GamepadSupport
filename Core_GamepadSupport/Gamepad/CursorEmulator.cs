@@ -70,6 +70,7 @@ namespace KK_GamepadSupport.Gamepad
 
             if (EmulatingCursor())
             {
+                Cursor.visible = false;
                 var rightStick = GamepadWhisperer.GetRightStick();
                 if (rightStick.magnitude > 0)
                 {
@@ -91,6 +92,10 @@ namespace KK_GamepadSupport.Gamepad
                 var scrollAmount = Mathf.RoundToInt(GamepadWhisperer.CurrentState.ThumbSticks.Left.Y * Native.WHEEL_DELTA * Time.deltaTime);
                 if (scrollAmount != 0)
                     Native.mouse_event(Native.MOUSEEVENTF_WHEEL, 0, 0, scrollAmount, 0);
+            }
+            else
+            {
+                Cursor.visible = true;
             }
 
             _previousR = rPressed;
