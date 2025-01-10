@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK_GamepadSupport", "KK_GamepadSupport\KK_GamepadSupport.csproj", "{B962835E-3A3D-4453-B319-A1B62CD5E984}"
 EndProject
@@ -9,38 +9,32 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KKS_GamepadSupport", "KKS_G
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Core_GamepadSupport", "Core_GamepadSupport\Core_GamepadSupport.shproj", "{FDBB965B-7A36-4E70-83D2-90C61797CE63}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{0D7272B9-916C-414D-8999-94F092B78469}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Core_GamepadSupport\Core_GamepadSupport.projitems*{9a4527bc-9577-4fa3-b560-57be8707e680}*SharedItemsImports = 4
-		Core_GamepadSupport\Core_GamepadSupport.projitems*{b962835e-3a3d-4453-b319-a1b62cd5e984}*SharedItemsImports = 4
-		Core_GamepadSupport\Core_GamepadSupport.projitems*{fdbb965b-7a36-4e70-83d2-90c61797ce63}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Debug|x64.ActiveCfg = Debug|x64
 		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Debug|x64.Build.0 = Debug|x64
-		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Release|Any CPU.ActiveCfg = Release|x64
 		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Release|x64.ActiveCfg = Release|x64
 		{B962835E-3A3D-4453-B319-A1B62CD5E984}.Release|x64.Build.0 = Release|x64
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|x64.Build.0 = Debug|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|x64.ActiveCfg = Release|Any CPU
-		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|x64.Build.0 = Release|Any CPU
+		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|x64.ActiveCfg = Debug|x64
+		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Debug|x64.Build.0 = Debug|x64
+		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|x64.ActiveCfg = Release|x64
+		{9A4527BC-9577-4FA3-B560-57BE8707E680}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {38722F2D-B40A-467B-BE4B-240F890385D9}
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Core_GamepadSupport\Core_GamepadSupport.projitems*{9a4527bc-9577-4fa3-b560-57be8707e680}*SharedItemsImports = 5
+		Core_GamepadSupport\Core_GamepadSupport.projitems*{b962835e-3a3d-4453-b319-a1b62cd5e984}*SharedItemsImports = 5
+		Core_GamepadSupport\Core_GamepadSupport.projitems*{fdbb965b-7a36-4e70-83d2-90c61797ce63}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

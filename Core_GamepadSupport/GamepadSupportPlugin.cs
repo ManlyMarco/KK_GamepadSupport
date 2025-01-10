@@ -13,15 +13,14 @@ namespace KK_GamepadSupport
     [BepInProcess(KoikatuAPI.GameProcessNameSteam)]
 #endif
     [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
-    [BepInPlugin(Guid, Guid, Version)]
+    [BepInPlugin(Guid, Constants.Name, Constants.Version)]
     public sealed class GamepadSupportPlugin : BaseUnityPlugin
     {
-        public const string Version = "2.1";
+        public const string Version = Constants.Version; // Set the version in Directory.Build.props
         public const string Guid = "GamepadSupport";
 
         internal static new ManualLogSource Logger;
         internal static ConfigEntry<bool> CanvasDebug { get; private set; }
-
 
         private void Awake()
         {
